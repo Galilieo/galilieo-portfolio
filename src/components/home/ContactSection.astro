@@ -1,0 +1,29 @@
+---
+import { siteConfig } from '../../config/site';
+// 用途：首页联系区；数据来源：src/config/site.ts；后续联系方式统一修改配置。
+---
+
+<section class="contact-section" id="contact" aria-labelledby="contact-title">
+  <div class="contact-section__inner reveal">
+    <p class="section-kicker">06 / Contact</p>
+    <h2 id="contact-title">欢迎聊聊项目、AI 应用，或者一次真实的问题排查。</h2>
+    <p>
+      目前我仍在持续学习和积累真实项目经验。如果你对我的项目、文章、AI
+      应用开发方向或实习经历感兴趣，欢迎通过邮件或 GitHub 联系我。
+    </p>
+    <div class="contact-links">
+      <a href={`mailto:${siteConfig.email}`}>发送邮件 <span aria-hidden="true">↗</span></a>
+      <a href={siteConfig.github} target="_blank" rel="noopener noreferrer"
+        >查看 GitHub <span aria-hidden="true">↗</span></a
+      >
+      <a href={siteConfig.heartIsland} target="_blank" rel="noopener noreferrer"
+        >访问心屿 <span aria-hidden="true">↗</span></a
+      >
+    </div>
+    <div class="contact-meta">
+      <span>{siteConfig.email}</span>
+      <span>github.com/Galilieo</span>
+      <span>heart-island.cn</span>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import ArticleCard from '../../components/blog/ArticleCard.astro';
+import SectionHeading from '../../components/common/SectionHeading.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const articles = (await getCollection('blog'))
+  .filter((article) => !article.data.draft)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="博客 — Galilieo"
+  description="记录项目开发、实习复盘、AI 应用学习和工程问题排查。"
+  canonicalPath="/notes/"
+>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <SiteHeader />
+  <main class="page-main" id="main-content">
+    <SectionHeading
+      eyebrow="Notes"
+      title="项目之外，也记录那些仍在形成中的想法。"
+      description="文章不追求包装成标准答案，更希望留下当时的判断过程和最后得到的经验。"
+    />
+    {
+      articles.length > 0 ? (
+        <div class="page-list">
+          {articles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">第一批文章正在整理中。</div>
+      )
+    }
+  </main>
+  <SiteFooter />
+</BaseLayout>

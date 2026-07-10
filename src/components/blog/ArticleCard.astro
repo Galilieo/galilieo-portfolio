@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  article: CollectionEntry<'blog'>;
+}
+
+const { article } = Astro.props;
+---
+
+<article class="note-entry reveal">
+  <span class="note-number">{String(article.data.order).padStart(2, '0')}</span>
+  <div>
+    <span>{article.data.category}</span>
+    <h2><a href={`/notes/${article.id}/`}>{article.data.title}</a></h2>
+    <p>{article.data.description}</p>
+  </div>
+  <span class="note-entry__state">{article.data.publishedAt ?? article.data.homepageState}</span>
+</article>

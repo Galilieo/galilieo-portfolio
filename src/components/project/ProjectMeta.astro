@@ -1,0 +1,17 @@
+---
+interface Props {
+  typeLabel: string;
+  role: string;
+  date: string;
+  status: string;
+}
+
+const { typeLabel, role, date, status } = Astro.props;
+---
+
+<div class="project-meta" aria-label="项目元信息">
+  <span>{typeLabel}</span>
+  <span>{role}</span>
+  <span>{date}</span>
+  <span>{status}</span>
+</div>

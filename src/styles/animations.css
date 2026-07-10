@@ -1,0 +1,79 @@
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 720ms var(--ease) var(--delay, 0ms),
+    transform 720ms var(--ease) var(--delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .hero-title__line > span,
+  .hero-title__line > em,
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .island-art-shell,
+  .island-scene::before,
+  .island-scene::after {
+    animation: none !important;
+  }
+}
+
+@keyframes islandShellFloat {
+  0%,
+  100% {
+    transform: translate(
+      calc(-50% + var(--island-shift-x, 0px)),
+      calc(-50% + var(--island-shift-y, 0px))
+    );
+  }
+  50% {
+    transform: translate(
+      calc(-50% + var(--island-shift-x, 0px)),
+      calc(-50% - 2px + var(--island-shift-y, 0px))
+    );
+  }
+}
+
+@keyframes islandRippleEcho {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.84);
+  }
+  18% {
+    opacity: 0.18;
+  }
+  72%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@keyframes waterLight {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.025);
+  }
+}

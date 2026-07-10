@@ -1,0 +1,17 @@
+---
+interface Props {
+  category: string;
+  publishedAt?: string;
+  updatedAt?: string;
+  readingTime?: number;
+}
+
+const { category, publishedAt, updatedAt, readingTime } = Astro.props;
+---
+
+<div class="article-meta" aria-label="文章信息">
+  <span>{category}</span>
+  {publishedAt && <time datetime={publishedAt}>{publishedAt}</time>}
+  {updatedAt && <span>更新于 {updatedAt}</span>}
+  {readingTime && <span>{readingTime} 分钟阅读</span>}
+</div>

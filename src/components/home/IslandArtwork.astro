@@ -1,0 +1,11 @@
+---
+import islandSvgUrl from '../../assets/svg/island-reference-no-heart-vector.svg?url';
+// 用途：原样输出心屿 SVG 与现有 Canvas 容器；数据来源：已确认岛屿素材；后续仅在素材确认后修改。
+---
+
+<div class="island-scene" aria-hidden="true">
+  <div class="island-art-shell">
+    <img class="island-art" src={islandSvgUrl} alt="" width="2240" height="436" decoding="async" />
+    <canvas class="island-fx-canvas" aria-hidden="true"></canvas>
+  </div>
+</div>

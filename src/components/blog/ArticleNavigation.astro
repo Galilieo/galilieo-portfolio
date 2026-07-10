@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  previous?: CollectionEntry<'blog'>;
+  next?: CollectionEntry<'blog'>;
+}
+
+const { previous, next } = Astro.props;
+---
+
+<nav class="article-navigation" aria-label="文章导航">
+  <div>
+    {previous && <a href={`/notes/${previous.id}/`}>← {previous.data.title}</a>}
+  </div>
+  <div>
+    {next && <a href={`/notes/${next.id}/`}>{next.data.title} →</a>}
+  </div>
+</nav>

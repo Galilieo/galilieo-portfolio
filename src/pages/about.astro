@@ -1,0 +1,19 @@
+---
+import AboutSection from '../components/home/AboutSection.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="关于我 — Galilieo"
+  description="Galilieo 的个人介绍、当前方向和持续学习目标。"
+  canonicalPath="/about/"
+>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <SiteHeader />
+  <main id="main-content">
+    <AboutSection />
+  </main>
+  <SiteFooter />
+</BaseLayout>

@@ -1,0 +1,41 @@
+---
+import IslandArtwork from './IslandArtwork.astro';
+import { siteConfig } from '../../config/site';
+// 用途：首页重点项目卡片；数据来源：现有心屿真实文案；后续项目内容迁入 Content Collections 后从集合读取。
+---
+
+<a
+  class="featured-project reveal"
+  href={siteConfig.heartIsland}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="打开心屿项目网站（新窗口）"
+  style="--delay: 220ms"
+>
+  <div class="featured-project__topline">
+    <span><i></i> Featured project</span>
+    <span>01 / Project</span>
+  </div>
+
+  <div class="featured-project__heading">
+    <div>
+      <h2>heart-island <span>心屿</span></h2>
+      <p>AI 情绪记录与匿名互助社区</p>
+    </div>
+    <span class="featured-project__link" aria-hidden="true">↗</span>
+  </div>
+
+  <div class="project-tags" aria-label="项目技术栈">
+    <span>Spring Boot</span>
+    <span>Vue 3</span>
+    <span>MySQL</span>
+    <span>LLM API</span>
+  </div>
+
+  <IslandArtwork />
+
+  <div class="featured-project__footer">
+    <span>Building with purpose</span>
+    <span>demo v0.1</span>
+  </div>
+</a>

@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import TagList from '../common/TagList.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+---
+
+<article class="project-entry project-card reveal">
+  <div class="project-entry__index">{String(project.data.order).padStart(2, '0')}</div>
+  <div class="project-entry__body">
+    <div class="project-entry__meta">
+      <span>{project.data.typeLabel}</span>
+      <span>{project.data.role}</span>
+    </div>
+    <h2><a href={`/projects/${project.id}/`}>{project.data.title}</a></h2>
+    <p>{project.data.description}</p>
+    <TagList items={project.data.stack} label={`${project.data.title}技术栈`} />
+  </div>
+  <a
+    class="project-entry__action"
+    href={`/projects/${project.id}/`}
+    aria-label={`查看${project.data.title}项目详情`}>→</a
+  >
+</article>

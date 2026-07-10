@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import SectionHeading from '../../components/common/SectionHeading.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import ProjectCard from '../../components/project/ProjectCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="项目 — Galilieo"
+  description="Galilieo 的真实项目、实习项目和持续开发记录。"
+  canonicalPath="/projects/"
+>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <SiteHeader />
+  <main class="page-main" id="main-content">
+    <SectionHeading
+      eyebrow="Projects"
+      title="项目不是功能清单，而是我解决问题的过程。"
+      description="这里只放真实完成、真实参与或正在持续开发的内容。"
+    />
+    <div class="page-list">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

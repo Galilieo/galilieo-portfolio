@@ -1,0 +1,33 @@
+---
+import { Picture } from 'astro:assets';
+import type { ComponentProps } from 'astro/types';
+
+type PictureSource = Exclude<ComponentProps<typeof Picture>['src'], string>;
+
+interface Props {
+  src: PictureSource;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  widths = [640, 960, 1440],
+  sizes = '(max-width: 720px) 100vw, 960px',
+  class: className,
+} = Astro.props;
+---
+
+<Picture
+  src={src}
+  alt={alt}
+  widths={widths}
+  sizes={sizes}
+  formats={['avif', 'webp']}
+  class={className}
+  loading="lazy"
+  decoding="async"
+/>

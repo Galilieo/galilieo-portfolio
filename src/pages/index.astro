@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import HeroSection from '../components/home/HeroSection.astro';
+import StatusStrip from '../components/home/StatusStrip.astro';
+import AboutSection from '../components/home/AboutSection.astro';
+import ProjectsSection from '../components/home/ProjectsSection.astro';
+import ExperienceSection from '../components/home/ExperienceSection.astro';
+import StackSection from '../components/home/StackSection.astro';
+import NotesSection from '../components/home/NotesSection.astro';
+import ContactSection from '../components/home/ContactSection.astro';
+---
+
+<BaseLayout>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <SiteHeader />
+  <main id="main-content">
+    <HeroSection />
+    <StatusStrip />
+    <AboutSection />
+    <ProjectsSection />
+    <ExperienceSection />
+    <StackSection />
+    <NotesSection />
+    <ContactSection />
+  </main>
+  <SiteFooter />
+</BaseLayout>

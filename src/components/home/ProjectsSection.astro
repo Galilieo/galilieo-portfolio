@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+
+// 用途：首页项目清单；数据来源：src/content/projects；后续通过 Markdown 修改内容，不改本组件视觉结构。
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section-shell projects-section" id="projects" aria-labelledby="projects-title">
+  <header class="section-heading reveal">
+    <div>
+      <p class="section-kicker">02 / Selected work</p>
+      <h2 id="projects-title">项目不是功能清单，<br />而是我解决问题的过程。</h2>
+    </div>
+    <p>
+      这里只放真实完成、真实参与或正在持续开发的内容。未完成的能力会单独标注，不和现有功能混在一起。
+    </p>
+  </header>
+
+  <div class="project-ledger">
+    {
+      projects.map((project) => (
+        <article
+          class:list={[
+            'project-entry',
+            project.data.featured && 'project-entry--detailed',
+            'reveal',
+          ]}
+        >
+          <div class="project-entry__index">{String(project.data.order).padStart(2, '0')}</div>
+          <div class="project-entry__body">
+            <div class="project-entry__meta">
+              <span>{project.data.typeLabel}</span>
+              <span>{project.data.role}</span>
+            </div>
+            <h3>{project.data.title}</h3>
+            {project.data.homepageDescription.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+
+            {project.data.currentCapabilities && project.data.inDevelopment && (
+              <div class="project-capabilities">
+                <div>
+                  <span>Current capabilities</span>
+                  <ul>
+                    {project.data.currentCapabilities.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <span>In development</span>
+                  <ul>
+                    {project.data.inDevelopment.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            <ul class="inline-tags" aria-label={`${project.data.title}技术栈`}>
+              {project.data.stack.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+          {project.data.website ? (
+            <a
+              class="project-entry__action"
+              href={project.data.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`访问${project.data.title}项目（新窗口）`}
+            >
+              ↗
+            </a>
+          ) : (
+            <span class="project-entry__status">{project.data.statusLabel}</span>
+          )}
+        </article>
+      ))
+    }
+  </div>
+  <p class="more-projects reveal">更多项目仍在开发与整理中。</p>
+</section>

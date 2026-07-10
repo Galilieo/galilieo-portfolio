@@ -1,0 +1,29 @@
+---
+import MobileNavigation from './MobileNavigation.astro';
+import { siteConfig } from '../../config/site';
+// 用途：网站品牌、主导航和主题/菜单控制；数据来源：网站配置与固定交互结构；后续品牌和按钮在本文件修改。
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="/" aria-label="返回首页">{siteConfig.name}<span>.</span></a>
+
+    <MobileNavigation />
+
+    <div class="header-controls">
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="打开导航"
+        aria-expanded="false"
+        aria-controls="site-navigation"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <button class="theme-toggle" type="button" aria-label="切换至深色模式" aria-pressed="false">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>

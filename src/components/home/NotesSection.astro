@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+
+// 用途：首页博客选题预览；数据来源：src/content/blog；后续新增选题或文章时修改 Markdown。
+const notes = (await getCollection('blog')).sort((a, b) => a.data.order - b.data.order);
+const categories = [
+  '项目日志',
+  '实习复盘',
+  'AI 应用学习',
+  '前端与移动端',
+  'Java 与后端',
+  '工程笔记',
+];
+---
+
+<section class="section-shell notes-section" id="notes" aria-labelledby="notes-title">
+  <header class="section-heading reveal">
+    <div>
+      <p class="section-kicker">05 / Notes</p>
+      <h2 id="notes-title">项目之外，也记录那些仍在形成中的想法。</h2>
+    </div>
+    <p>
+      这里主要记录项目开发、实习复盘、AI
+      应用学习和工程问题排查。文章不追求包装成标准答案，更希望留下当时的判断过程和最后得到的经验。
+    </p>
+  </header>
+
+  <ul class="note-categories reveal" aria-label="博客分类">
+    {categories.map((category) => <li>{category}</li>)}
+  </ul>
+
+  <div class="notes-list notes-list--ideas">
+    {
+      notes.map((note) => (
+        <article class="note-entry reveal">
+          <span class="note-number">{String(note.data.order).padStart(2, '0')}</span>
+          <div>
+            <span>{note.data.category}</span>
+            <h3>{note.data.title}</h3>
+          </div>
+          <span class="note-entry__state">{note.data.homepageState}</span>
+        </article>
+      ))
+    }
+  </div>
+
+  <div class="notes-empty reveal">
+    <strong>第一批文章正在整理中。</strong>
+    <p>相比快速发布，我更希望先把真实开发过程和自己的判断写清楚。</p>
+  </div>
+</section>

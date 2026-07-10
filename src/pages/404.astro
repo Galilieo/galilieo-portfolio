@@ -1,0 +1,23 @@
+---
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="页面未找到 — Galilieo"
+  description="请求的页面不存在。"
+  canonicalPath="/404.html"
+>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <SiteHeader />
+  <main class="page-main" id="main-content">
+    <header class="page-header">
+      <p class="section-kicker">404</p>
+      <h1>页面没有找到。</h1>
+      <p>你访问的地址不存在，或者内容已经移动。</p>
+      <p class="back-link"><a href="/">← 返回首页</a></p>
+    </header>
+  </main>
+  <SiteFooter />
+</BaseLayout>

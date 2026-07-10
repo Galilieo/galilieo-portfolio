@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import TagList from '../components/common/TagList.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import ProjectMeta from '../components/project/ProjectMeta.astro';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const title = `${project.data.title} — Galilieo`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: project.data.title,
+  description: project.data.description,
+  dateCreated: project.data.date,
+  creator: { '@type': 'Person', name: 'Galilieo' },
+  url: new URL(`/projects/${project.id}/`, 'https://galilieo.heart-island.cn').toString(),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={project.data.description}
+  canonicalPath={`/projects/${project.id}/`}
+  jsonLd={jsonLd}
+>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <SiteHeader />
+  <main class="page-main" id="main-content">
+    <article class="project-page">
+      <header class="page-header reveal">
+        <p class="section-kicker">Project / {String(project.data.order).padStart(2, '0')}</p>
+        <h1>{project.data.title}</h1>
+        <p>{project.data.description}</p>
+        <ProjectMeta
+          typeLabel={project.data.typeLabel}
+          role={project.data.role}
+          date={project.data.date}
+          status={project.data.status}
+        />
+        <TagList items={project.data.stack} label="项目技术栈" />
+      </header>
+      <div class="prose reveal"><slot /></div>
+      {
+        project.data.website && (
+          <p class="project-website">
+            <a href={project.data.website} target="_blank" rel="noopener noreferrer">
+              访问项目网站 ↗
+            </a>
+          </p>
+        )
+      }
+      <p class="back-link"><a href="/projects/">← 返回项目列表</a></p>
+    </article>
+  </main>
+  <SiteFooter />
+</BaseLayout>

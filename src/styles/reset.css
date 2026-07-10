@@ -1,0 +1,47 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      circle at 8% 10%,
+      color-mix(in srgb, var(--accent) 5%, transparent),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 91% 0%,
+      color-mix(in srgb, var(--wine) 4%, transparent),
+      transparent 25%
+    ),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}

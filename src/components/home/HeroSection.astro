@@ -1,0 +1,47 @@
+---
+import FeaturedProject from './FeaturedProject.astro';
+// 用途：首页首屏文案与重点项目组合；数据来源：现有首页真实文案；后续首屏文字在本文件修改。
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <p class="eyebrow reveal" style="--delay: 60ms">
+      <i aria-hidden="true"></i>
+      软件工程学生 · AI 应用开发
+    </p>
+
+    <h1 id="hero-title" class="hero-title">
+      <span class="hero-title__line"><span>在代码、产品与</span></span>
+      <span class="hero-title__line"><span>真实需求之间，</span></span>
+      <span class="hero-title__line"><span>做一些能够被</span></span>
+      <span class="hero-title__line"><em>使用的东西。</em></span>
+    </h1>
+
+    <div class="hero-summary reveal" style="--delay: 420ms">
+      <p>我是 Galilieo，一名软件工程专业学生。</p>
+      <p>
+        目前参与真实 AI
+        聊天产品的前端与移动端开发，也在持续完善个人项目「心屿」。这里记录我的项目、实习经历，以及一些仍在形成中的技术思考。
+      </p>
+    </div>
+
+    <div class="hero-actions reveal" style="--delay: 520ms">
+      <a class="button button--primary" href="#projects">
+        查看项目
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a class="button button--secondary" href="#notes">
+        阅读记录
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="hero-micro reveal" style="--delay: 600ms" aria-label="网站摘要">
+      <span>Shanghai, China</span>
+      <span>Portfolio · Notes</span>
+      <span>Demo v0.1</span>
+    </div>
+  </div>
+
+  <FeaturedProject />
+</section>
