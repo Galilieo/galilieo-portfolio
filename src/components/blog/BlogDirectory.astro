@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { createBlogCategoryGroups } from '../../lib/blog-directory';
+import ArticleCard from './ArticleCard.astro';
+import ArticleCategoryDirectory from './ArticleCategoryDirectory.astro';
+
+interface Props {
+  articles: CollectionEntry<'blog'>[];
+}
+
+const { articles } = Astro.props;
+const groups = createBlogCategoryGroups(articles);
+const categories = groups.map(({ name, id, count }) => ({ name, id, count }));
+---
+
+<section
+  class:list={['blog-directory-layout', { 'has-single-category': groups.length === 1 }]}
+  data-blog-directory
+  aria-label="博客文章目录"
+>
+  {
+    groups.length > 1 && (
+      <aside class="blog-directory-layout__sidebar">
+        <ArticleCategoryDirectory categories={categories} label="博客分类目录" />
+      </aside>
+    )
+  }
+
+  <div class="blog-category-groups">
+    {
+      groups.map((group) => (
+        <section
+          class="blog-category-section"
+          id={group.id}
+          data-blog-category-section
+          data-category-count={group.count}
+        >
+          <header class="blog-category-section__heading">
+            <div>
+              <p>Category</p>
+              <h2>{group.name}</h2>
+            </div>
+            <span>{String(group.count).padStart(2, '0')} articles</span>
+          </header>
+          <div class="article-grid">
+            {group.articles.map((article) => <ArticleCard article={article} headingLevel={3} />)}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</section>

@@ -2,12 +2,10 @@
 title: '一次 Android 返回手势问题的完整排查过程'
 description: '从路由栈、组件弹窗和系统返回事件三个层次，复盘一次 Ionic 应用中 Android 返回行为的统一处理。'
 publishedAt: 2026-07-11
-category: 实习复盘
-cover: ../../assets/images/blog/android-back-gesture.svg
+category: 前端与移动端
 tags:
   - Android
   - Ionic
-  - Capacitor
   - 问题排查
 draft: false
 featured: false

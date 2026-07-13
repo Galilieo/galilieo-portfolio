@@ -10,6 +10,7 @@ const checks = [
   { name: 'ESLint', script: 'lint' },
   { name: 'Astro check', script: 'check' },
   { name: 'Astro build', script: 'build' },
+  { name: 'Blog navigation structure', script: 'check:blog' },
   { name: 'Homepage structure', script: 'check:home' },
 ];
 
@@ -62,5 +63,5 @@ for (const [index, check] of checks.entries()) {
 }
 
 console.log(
-  '\nVerification passed: lint, Astro check, build, and homepage structure checks completed successfully.',
+  '\nVerification passed: lint, Astro check, build, blog navigation, and homepage structure checks completed successfully.',
 );

@@ -1,19 +1,24 @@
 ---
+import type { MarkdownHeading } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import ArticleMeta from '../components/blog/ArticleMeta.astro';
 import ArticleNavigation from '../components/blog/ArticleNavigation.astro';
+import ArticleReadingNavigation from '../components/blog/ArticleReadingNavigation.astro';
 import TagList from '../components/common/TagList.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
+import type { BlogCategorySummary } from '../lib/blog-directory';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
   article: CollectionEntry<'blog'>;
   previous?: CollectionEntry<'blog'>;
   next?: CollectionEntry<'blog'>;
+  categories: BlogCategorySummary[];
+  headings: MarkdownHeading[];
 }
 
-const { article, previous, next } = Astro.props;
+const { article, previous, next, categories, headings } = Astro.props;
 const title = `${article.data.title} — Galilieo`;
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -40,23 +45,37 @@ const jsonLd = {
   <a class="skip-link" href="#main-content">跳到主要内容</a>
   <SiteHeader />
   <main class="page-main interior-page interior-detail" id="main-content">
-    <article class="article-page">
-      <header class="page-header reveal">
-        <p class="section-kicker">Notes / {article.data.category}</p>
-        <h1>{article.data.title}</h1>
-        <p>{article.data.description}</p>
-        <ArticleMeta
-          category={article.data.category}
-          publishedAt={article.data.publishedAt}
-          updatedAt={article.data.updatedAt}
-          readingTime={article.data.readingTime}
+    <div class="article-reading-layout">
+      <article class="article-page">
+        <header class="page-header reveal">
+          <p class="section-kicker">Notes / {article.data.category}</p>
+          <h1>{article.data.title}</h1>
+          <p>{article.data.description}</p>
+          <ArticleMeta
+            category={article.data.category}
+            publishedAt={article.data.publishedAt}
+            updatedAt={article.data.updatedAt}
+            readingTime={article.data.readingTime}
+          />
+          <TagList items={article.data.tags} label="文章标签" />
+        </header>
+        <ArticleReadingNavigation
+          variant="mobile"
+          categories={categories}
+          currentCategory={article.data.category}
+          headings={headings}
         />
-        <TagList items={article.data.tags} label="文章标签" />
-      </header>
-      <div class="prose reveal"><slot /></div>
-      <p class="back-link"><a href="/notes/">← 返回博客列表</a></p>
-      <ArticleNavigation previous={previous} next={next} />
-    </article>
+        <div class="prose reveal"><slot /></div>
+        <p class="back-link"><a href="/notes/">← 返回博客列表</a></p>
+        <ArticleNavigation previous={previous} next={next} />
+      </article>
+      <ArticleReadingNavigation
+        variant="desktop"
+        categories={categories}
+        currentCategory={article.data.category}
+        headings={headings}
+      />
+    </div>
   </main>
   <SiteFooter />
 </BaseLayout>

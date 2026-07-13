@@ -52,7 +52,7 @@
     rgba(8, 15, 30, 0.2) 45%,
     rgba(5, 11, 23, 0.92) 100%
   );
-  --home-demo-background-overlay: linear-gradient(
+  --home-background-overlay: linear-gradient(
     180deg,
     rgba(243, 242, 237, 0.34) 0%,
     rgba(243, 242, 237, 0.46) 42%,
@@ -68,7 +68,7 @@
   --interior-border: rgba(255, 255, 255, 0.5);
   --interior-border-strong: rgba(143, 165, 184, 0.48);
   --interior-highlight: rgba(255, 255, 255, 0.72);
-  --interior-overlay: linear-gradient(
+  --interior-background-overlay: linear-gradient(
     180deg,
     rgba(237, 241, 242, 0.48) 0%,
     rgba(237, 241, 242, 0.68) 34%,
@@ -152,7 +152,7 @@ html[data-theme='dark'] {
     rgba(2, 8, 18, 0.22) 43%,
     rgba(2, 7, 16, 0.94) 100%
   );
-  --home-demo-background-overlay: linear-gradient(
+  --home-background-overlay: linear-gradient(
     180deg,
     rgba(6, 16, 30, 0.54) 0%,
     rgba(6, 16, 30, 0.72) 42%,
@@ -168,7 +168,7 @@ html[data-theme='dark'] {
   --interior-border: rgba(175, 199, 235, 0.14);
   --interior-border-strong: rgba(133, 164, 209, 0.3);
   --interior-highlight: rgba(195, 216, 247, 0.1);
-  --interior-overlay: linear-gradient(
+  --interior-background-overlay: linear-gradient(
     180deg,
     rgba(6, 16, 30, 0.46) 0%,
     rgba(6, 16, 30, 0.7) 34%,

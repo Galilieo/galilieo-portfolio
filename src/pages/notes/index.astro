@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import ArticleCard from '../../components/blog/ArticleCard.astro';
-import ArticleTagFilter from '../../components/blog/ArticleTagFilter.astro';
+import BlogDirectory from '../../components/blog/BlogDirectory.astro';
 import SectionHeading from '../../components/common/SectionHeading.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
@@ -14,7 +13,7 @@ const articles = (await getCollection('blog'))
 
 <BaseLayout
   title="博客 — Galilieo"
-  description="记录项目开发、实习复盘、AI 应用学习和工程问题排查。"
+  description="记录项目开发、问题复盘、学习过程和生活片段。"
   canonicalPath="/blog/"
 >
   <a class="skip-link" href="#main-content">跳到主要内容</a>
@@ -22,19 +21,14 @@ const articles = (await getCollection('blog'))
   <main class="page-main interior-page interior-page--blog" id="main-content">
     <SectionHeading
       eyebrow="Notes"
-      title="项目之外，也记录那些仍在形成中的想法。"
-      description="文章不追求包装成标准答案，更希望留下当时的判断过程和最后得到的经验。"
+      title="关于开发，也关于生活。"
+      description="记录项目里的判断和复盘，也留下一些日常片段和阶段性的想法。"
     />
-    {articles.length > 0 && <ArticleTagFilter articles={articles} />}
     {
       articles.length > 0 ? (
-        <div class="article-grid" data-article-grid>
-          {articles.map((article) => (
-            <ArticleCard article={article} />
-          ))}
-        </div>
+        <BlogDirectory articles={articles} />
       ) : (
-        <div class="empty-state">第一批文章正在整理中。</div>
+        <div class="empty-state reveal">第一批文章正在整理中。</div>
       )
     }
   </main>

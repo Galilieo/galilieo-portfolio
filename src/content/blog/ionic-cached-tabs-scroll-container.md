@@ -3,12 +3,10 @@ title: 'Ionic 缓存 Tab 中，怎样找到当前真正的滚动容器'
 description: '从 iOS statusTap 需求出发，复盘 Ionic 页面缓存、嵌套 Tab、虚拟视频流和多种滚动容器的识别与策略分流。'
 publishedAt: 2026-07-11
 category: 前端与移动端
-cover: ../../assets/images/blog/ionic-scroll-container.svg
 tags:
   - Ionic
   - iOS
-  - Swiper
-  - 页面缓存
+  - 问题排查
 draft: false
 featured: false
 readingTime: 7
@@ -81,6 +79,24 @@ Ionic 为了保留 Tab 状态和提升切换速度，可能缓存离开的页面
 最终视频页单独使用无过渡的索引跳转，直接回到首屏。普通列表保留平滑回顶，视频 Feed 优先保证稳定和即时反馈。
 
 这是一次很明确的方案取舍：视觉一致性让位于页面类型的真实成本。
+
+## Android 没有 statusTap，怎样复用同一套回顶能力
+
+iOS 可以通过 Capacitor StatusBar 的 `statusTap` 提供回顶入口，Android 普通应用无法稳定监听真正的系统状态栏点击。为了保持用户目标一致，Android 使用“重复点击当前底部 Tab 回到顶部”作为替代交互。
+
+实现仍然集中在 `MainFooterTabs.vue`：正常切换 Tab 时只执行路由切换；当目标 Tab 已经是当前路由时，才调用前面建立的页面分流逻辑。这样没有要求每个页面重新维护一套 Android 事件，也不会在用户第一次进入页面时意外回顶。
+
+重复点击使用 300ms 节流，而不是防抖。回顶需要对第一次点击立即响应，短时间内的后续点击只需要被忽略；如果改成防抖，用户反而要等待停止操作后才能看到结果。
+
+平台入口最终变成：
+
+```text
+iOS statusTap ─────────┐
+                      ├─> 当前路由与可见页面识别 -> 页面专属回顶策略
+Android 重复点击当前 Tab ┘
+```
+
+两端复用的是“怎样找到正确目标”的核心能力，而不是强求相同的系统手势。
 
 ## 验证路径
 

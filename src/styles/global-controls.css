@@ -494,6 +494,13 @@ html:not(.js) .global-music__nojs {
   }
 }
 
+@media (max-width: 767px) {
+  body:has(#main-content > .home-dashboard) .global-music,
+  html:not(.js) body:has(#main-content > .home-dashboard) .back-to-top {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .global-music__orb,
   .global-music__panel,

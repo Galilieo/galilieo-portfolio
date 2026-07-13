@@ -62,6 +62,10 @@ for (const marker of [
   'data-home-carousel',
   'data-home-time',
   'data-github-activity',
+  'data-github-total',
+  'data-github-active-days',
+  'data-github-repository',
+  'data-github-status',
   'data-home-environment',
   'data-home-weather',
   'data-global-music',
@@ -72,6 +76,10 @@ for (const marker of [
   'class="home-carousel__section-link" href="/blog/"',
 ]) {
   if (!homepage.includes(marker)) failures.push(`Homepage must render ${marker}.`);
+}
+
+if (!homepage.includes('Public events · 30d')) {
+  failures.push('Homepage GitHub snapshot must label its data as 30-day public events.');
 }
 
 const audioCount = (homepage.match(/<audio\b/g) ?? []).length;
@@ -89,7 +97,7 @@ const expectedProfileHrefs = [
   '/blog/',
   'https://github.com/Galilieo',
   'mailto:jiangdavis021@gmail.com',
-  'https://heart-island.cn',
+  'mailto:2930382766@qq.com',
 ];
 if (JSON.stringify(profileHrefs) !== JSON.stringify(expectedProfileHrefs)) {
   failures.push(
@@ -98,6 +106,11 @@ if (JSON.stringify(profileHrefs) !== JSON.stringify(expectedProfileHrefs)) {
 }
 if (!/<h1[^>]*>Galilieo<\/h1>/.test(profileMarkup)) {
   failures.push('Homepage profile card must render the personal name Galilieo.');
+}
+for (const label of ['GitHub', 'Gmail', 'QQ 邮箱']) {
+  if (!profileMarkup.includes(`home-profile__contact-label" aria-hidden="true">${label}<`)) {
+    failures.push(`Homepage profile must render the ${label} brand contact label.`);
+  }
 }
 
 let previousIndex = -1;

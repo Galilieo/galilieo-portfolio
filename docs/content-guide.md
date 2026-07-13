@@ -7,7 +7,7 @@
 统一配置在 `src/config/site.ts`：
 
 - `name`、`title`、`description`、`url`：站点和全局 SEO
-- `email`、`github`、`heartIsland`：联系入口与外链
+- `email`、`qqEmail`、`github`、`heartIsland`：联系入口与外链
 - `author`：姓名、位置和身份
 - `navigation`、`socialLinks`：顶部导航和社交链接
 
@@ -19,7 +19,7 @@
 
 首页音乐清单位于 `src/data/music.ts`，不要手工维护歌曲元数据。更新网易云歌单后运行 `pnpm run sync:music`，脚本会读取歌单 `18145116776`、检测站外播放可用性并重写静态清单；构建与访客访问页面时不请求网易云元数据接口。
 
-博客 Demo 封面位于 `src/assets/images/blog/`，当前四张 SVG 是仓库内原创的二次元编辑插画，不依赖现成角色或第三方图片。正式替换时仍需填写相对路径 `cover`，并确认新素材许可证、作者和公开使用范围。
+博客列表当前按 Category 从 `src/assets/images/covers/` 选择场景背景：前端与移动端/实习复盘使用巷道图，工程笔记/AI 应用学习使用太空舱图，项目日志使用花海图；未映射的分类优先使用文章 frontmatter 的 `cover`，没有独立封面时回退到花海图。新增公开素材前必须确认许可证、作者和公开使用范围。
 
 修改姓名、身份或方向时同时检查 `siteConfig` 与 `src/data/home.ts`，避免首屏、关于区和 SEO 信息互相矛盾。
 
@@ -84,7 +84,12 @@ draft: false
 homepageState: 已发布
 ```
 
-`publishedAt`、`updatedAt` 支持 `YYYY`、`YYYY-MM` 或 `YYYY-MM-DD`，但公开文章必须有 `publishedAt`。`readingTime` 是可选正整数。`category` 表示文章的单一主分类；`tags` 是多值数组，一篇文章可以同时属于多个标签。`/blog/` 与 `/notes/` 会从全部公开文章聚合 Tag 和数量，并在浏览器端提供单选筛选；文章卡显示完整 Tag 列表。当前 `featured` 字段尚未参与页面筛选或样式；不要依赖它改变展示位置。
+`publishedAt`、`updatedAt` 支持 `YYYY`、`YYYY-MM` 或 `YYYY-MM-DD`，但公开文章必须有 `publishedAt`。`readingTime` 是可选正整数。当前 `featured` 字段尚未参与页面筛选或样式；不要依赖它改变展示位置。
+
+- `category` 是文章的唯一主分类，用于 `/blog/` 与 `/notes/` 的目录分组。优先复用已有分类，避免为单篇文章创建含义相近的新分类。
+- Category 侧栏只在宽桌面展示；小屏直接阅读分类分组，不为分类数量增加额外折叠目录。
+- `tags` 是辅助主题词，公开文章保留 2–3 个主要 Tag；Tag 显示在卡片和文章头部，不创建独立筛选入口。
+- 正文使用连续、清晰的 H2/H3 层级生成文章目录，不跳级，也不使用标题只做视觉加粗。
 
 公开文章会进入 `/notes/`、`/blog/`、文章详情、首页 Latest Notes 轮播、独立归档页、RSS 和 sitemap。草稿不会生成公开详情页，也不会进入首页、归档、RSS 或 sitemap。
 
@@ -102,7 +107,7 @@ homepageState: 已发布
 cover: ../../assets/images/projects/my-project.jpg
 ```
 
-`cover` 已在项目和博客 schema 中定义，但当前 `ProjectCard`、`ArticleCard`、详情 Layout 和 SEO 元信息都没有渲染或使用它。仅填写字段不会在页面显示封面；需要展示封面时应作为单独的组件任务实现并验证。固定公开路径资源才放 `public/`。
+`cover` 已在项目和博客 schema 中定义。项目卡直接渲染 frontmatter 封面；博客卡优先使用 Category 背景映射，未映射分类再回退到文章 `cover` 或默认花海图。列表卡通过 Astro `Image` 生成响应式资源。详情 Layout 仍未使用封面；默认 SEO 分享图由 `siteConfig.defaultSeoImage` 指向 `public/images/galilieo-header.jpg`。
 
 ## 修改导航
 

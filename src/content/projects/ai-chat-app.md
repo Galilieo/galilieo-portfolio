@@ -9,6 +9,7 @@ date: 2026-06
 status: 项目内容不公开
 typeLabel: 实习项目 · 非公开
 role: Frontend / Mobile
+cover: ../../assets/images/covers/scene-alley.webp
 stack:
   - Ionic
   - Vue 3

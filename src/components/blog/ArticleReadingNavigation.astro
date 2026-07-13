@@ -1,0 +1,62 @@
+---
+import type { MarkdownHeading } from 'astro';
+import type { BlogCategorySummary } from '../../lib/blog-directory';
+
+interface Props {
+  variant: 'desktop' | 'mobile';
+  categories: BlogCategorySummary[];
+  currentCategory: string;
+  headings: MarkdownHeading[];
+}
+
+const { variant, categories, currentCategory, headings } = Astro.props;
+const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const currentCategoryEntry = categories.find((category) => category.name === currentCategory);
+const categoryHref = currentCategoryEntry ? `/notes/#${currentCategoryEntry.id}` : '/notes/';
+---
+
+{
+  variant === 'desktop' ? (
+    <aside class="article-reading-navigation article-reading-navigation--desktop" data-reading-navigation>
+      <a class="article-reading-navigation__category" href={categoryHref} data-current-category-link>
+        ← {currentCategory}
+      </a>
+      {tocHeadings.length > 0 && (
+        <nav class="article-toc" aria-label="本文目录">
+          <p>本文目录</p>
+          <ol>
+            {tocHeadings.map((heading) => (
+              <li class:list={{ 'is-depth-three': heading.depth === 3 }}>
+                <a href={`#${heading.slug}`} data-reading-toc-link>
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+    </aside>
+  ) : (
+    tocHeadings.length > 0 && (
+      <details class="article-reading-navigation article-reading-navigation--mobile" data-reading-navigation>
+        <summary>
+          <span>本文目录</span>
+          <span>{tocHeadings.length} 节</span>
+        </summary>
+        <div class="article-reading-navigation__body">
+          <nav class="article-toc" aria-label="移动端本文目录">
+            <ol>
+              {tocHeadings.map((heading) => (
+                <li class:list={{ 'is-depth-three': heading.depth === 3 }}>
+                  <a href={`#${heading.slug}`} data-reading-toc-link>
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </div>
+      </details>
+    )
+  )
+}

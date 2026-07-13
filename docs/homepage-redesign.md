@@ -105,7 +105,7 @@
 - 2026-07-11 的 P0 曾使用 Hero → Quick Overview → Featured Projects → Latest Blog → Archive Preview → About Preview。
 - 该结构及其首页专用组件已由两行仪表盘替代；仅在历史任务中保留实施记录，不得恢复为当前首页。
 
-Demo 额外叠加了站点所有者提供的高清压缩背景 `src/assets/images/home/demo-background-placeholder.webp`。来源确认与正式发布边界记录在 `design-guide.md`；正式上线前必须确认授权或替换。
+当前实现叠加站点所有者指定的高清压缩背景 `src/assets/images/home/demo-background-placeholder.webp`，并通过主题遮罩控制对比度；人物图收敛到头像、图标和分享图。素材来源与公开使用边界记录在 `design-guide.md`。
 
 ### 当前实现（2026-07-12 已实施并验证）
 

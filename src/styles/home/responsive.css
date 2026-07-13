@@ -1,4 +1,20 @@
 /* Homepage dashboard responsive layout. */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .home-utility__track {
+    grid-template-columns: 60px minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .home-utility__cover {
+    width: 60px;
+    border-radius: 16px;
+  }
+
+  .home-utility__track strong {
+    font-size: 16px;
+  }
+}
+
 @media (max-width: 999px) {
   body:has(#main-content > .home-dashboard) {
     --home-page: min(100% - 36px, 820px);
@@ -22,6 +38,10 @@
   .home-utility {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: none;
+  }
+
+  .home-utility__card {
+    min-height: 194px;
   }
 
   .home-status {
@@ -51,6 +71,11 @@
   .home-profile__footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .home-profile__contacts {
+    width: 100%;
+    justify-content: flex-end;
   }
 
   .home-utility {
@@ -89,6 +114,102 @@
 }
 
 @media (max-width: 580px) {
+  .home-utility__github,
+  .home-utility__music {
+    padding: 20px;
+  }
+
+  .home-utility__github-range {
+    padding-inline: 8px;
+    font-size: 7px;
+  }
+
+  .home-utility__github-body {
+    min-height: 124px;
+    margin: 15px 0 12px;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .home-utility__github-metrics {
+    padding: 6px 12px 6px 0;
+  }
+
+  .home-utility__github-total {
+    display: grid;
+    gap: 4px;
+  }
+
+  .home-utility__github-total span {
+    padding-bottom: 0;
+  }
+
+  .home-utility__github-meta > div {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .home-utility__github-meta dd {
+    text-align: left;
+  }
+
+  .home-utility__github-pulse {
+    padding: 10px 9px 8px;
+    border-radius: 14px;
+  }
+
+  .home-utility__activity {
+    height: 62px;
+    min-height: 62px;
+    margin-top: 7px;
+  }
+
+  .home-utility__activity.is-loaded {
+    gap: 2px;
+  }
+
+  .home-utility__activity [data-level='4'] {
+    height: 58px;
+  }
+
+  .home-utility__github-axis {
+    gap: 5px;
+    font-size: 6px;
+  }
+
+  .home-utility__github-legend i {
+    width: 7px;
+  }
+
+  .home-utility__track {
+    grid-template-columns: 60px minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .home-utility__cover {
+    width: 60px;
+    border-radius: 16px;
+  }
+
+  .home-utility__track strong {
+    font-size: 16px;
+  }
+
+  .home-utility__controls {
+    gap: 3px;
+  }
+
+  .home-utility__controls button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .home-utility__controls button[data-music-action='toggle'] {
+    width: 36px;
+    height: 36px;
+  }
+
   .home-profile__content {
     padding: 22px 18px;
   }
@@ -151,8 +272,12 @@
   .home-profile__count,
   .home-profile__count strong,
   .home-profile__contact,
+  .home-profile__contact-label,
   .home-utility__card,
   .home-utility__controls button,
+  .home-utility__github-footer,
+  .home-utility__github-arrow,
+  .home-utility__activity,
   .home-carousel__section-link,
   .home-carousel__card-link,
   .home-carousel__dots span {
@@ -160,9 +285,15 @@
   }
 
   .home-utility__card:hover,
+  .home-utility__github-footer:hover .home-utility__github-arrow,
+  .home-utility__github-footer:focus-visible .home-utility__github-arrow,
   .home-carousel__card-link:hover,
   .home-carousel__card-link:focus-visible {
     transform: none;
+  }
+
+  .home-utility__github[data-state='loading'] .home-utility__activity {
+    animation: none;
   }
 
   .home-profile:hover,
@@ -174,9 +305,5 @@
   .home-profile:hover .home-profile__about-cue > span,
   .home-profile__about-link:focus-visible .home-profile__about-cue > span {
     transform: none;
-  }
-
-  .home-utility__music[data-state='playing'] .home-utility__cover img {
-    animation: none;
   }
 }

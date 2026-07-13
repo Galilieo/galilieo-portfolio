@@ -83,6 +83,11 @@
   font-size: 23px;
 }
 
+.prose h2[id],
+.prose h3[id] {
+  scroll-margin-top: 92px;
+}
+
 .prose p,
 .prose ul,
 .prose ol,
@@ -185,5 +190,11 @@
 
   .article-navigation > div:last-child {
     text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
   }
 }

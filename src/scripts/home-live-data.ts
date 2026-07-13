@@ -33,20 +33,9 @@ interface WeatherCache {
   current: WeatherCurrent;
 }
 
-type GitHubCategory = (typeof GITHUB_CATEGORIES)[number];
-
 const GITHUB_CACHE_KEY = 'galilieo:github-events:v1';
 const GITHUB_CACHE_TTL = 30 * 60 * 1000;
 const GITHUB_DAYS = 30;
-const GITHUB_CATEGORIES = [
-  'push',
-  'pull-request',
-  'issue',
-  'review',
-  'create',
-  'star',
-  'other',
-] as const;
 const ENVIRONMENT_CACHE_KEY = 'galilieo:environment:v1';
 const ENVIRONMENT_CACHE_TTL = 24 * 60 * 60 * 1000;
 const WEATHER_CACHE_PREFIX = 'galilieo:weather:v1';
@@ -58,17 +47,6 @@ const shanghaiDateFormatter = new Intl.DateTimeFormat('en-CA', {
   month: '2-digit',
   day: '2-digit',
 });
-
-function eventCategory(type: string): GitHubCategory {
-  if (type === 'PushEvent') return 'push';
-  if (type === 'PullRequestEvent') return 'pull-request';
-  if (type === 'IssuesEvent' || type === 'IssueCommentEvent') return 'issue';
-  if (type === 'PullRequestReviewEvent' || type === 'PullRequestReviewCommentEvent')
-    return 'review';
-  if (type === 'CreateEvent' || type === 'ReleaseEvent') return 'create';
-  if (type === 'WatchEvent') return 'star';
-  return 'other';
-}
 
 function dateKey(date: Date) {
   return shanghaiDateFormatter.format(date);
@@ -110,42 +88,61 @@ function writeGitHubCache(events: GitHubEvent[]) {
 function renderGitHubActivity(card: HTMLElement, events: GitHubEvent[], cached = false) {
   const grid = card.querySelector<HTMLElement>('[data-github-grid]');
   const summary = card.querySelector<HTMLElement>('[data-github-summary]');
-  if (!grid || !summary) return;
+  const total = card.querySelector<HTMLElement>('[data-github-total]');
+  const activeDays = card.querySelector<HTMLElement>('[data-github-active-days]');
+  const repository = card.querySelector<HTMLElement>('[data-github-repository]');
+  const status = card.querySelector<HTMLElement>('[data-github-status]');
+  if (!grid || !summary || !total || !activeDays || !repository || !status) return;
 
-  const counts = new Map<string, number>();
+  const dailyCounts = new Map<string, number>();
   events.forEach((event) => {
     const createdAt = new Date(event.created_at);
     if (isNaN(createdAt.getTime())) return;
-    const key = `${dateKey(createdAt)}|${eventCategory(event.type)}`;
-    counts.set(key, (counts.get(key) ?? 0) + 1);
+    const key = dateKey(createdAt);
+    dailyCounts.set(key, (dailyCounts.get(key) ?? 0) + 1);
   });
 
   const today = new Date(`${dateKey(new Date())}T00:00:00Z`);
   const start = new Date(today.getTime());
   start.setUTCDate(today.getUTCDate() - (GITHUB_DAYS - 1));
-  const fragment = document.createDocumentFragment();
+  const countsInWindow: number[] = [];
 
   for (let dayIndex = 0; dayIndex < GITHUB_DAYS; dayIndex += 1) {
     const day = new Date(start.getTime());
     day.setUTCDate(start.getUTCDate() + dayIndex);
-    const dayKey = day.toISOString().slice(0, 10);
-    GITHUB_CATEGORIES.forEach((category) => {
-      const count = counts.get(`${dayKey}|${category}`) ?? 0;
-      const cell = document.createElement('span');
-      cell.dataset.githubCell = '';
-      cell.dataset.category = category;
-      cell.dataset.level = String(Math.min(4, count));
-      cell.title = `${dayKey} · ${category} · ${count} 条`;
-      fragment.append(cell);
-    });
+    countsInWindow.push(dailyCounts.get(day.toISOString().slice(0, 10)) ?? 0);
   }
+
+  const peak = Math.max(1, ...countsInWindow);
+  const fragment = document.createDocumentFragment();
+  let activeDayCount = 0;
+
+  countsInWindow.forEach((count, dayIndex) => {
+    const day = new Date(start.getTime());
+    day.setUTCDate(start.getUTCDate() + dayIndex);
+    const dayKey = day.toISOString().slice(0, 10);
+    const level = count === 0 ? 0 : Math.max(1, Math.ceil((count / peak) * 4));
+    if (count > 0) activeDayCount += 1;
+
+    const cell = document.createElement('span');
+    cell.dataset.githubCell = '';
+    cell.dataset.level = String(level);
+    cell.title = `${dayKey} · ${count} 条公开事件`;
+    fragment.append(cell);
+  });
 
   grid.replaceChildren(fragment);
   grid.classList.add('is-loaded');
   grid.setAttribute('aria-label', `最近 30 天 GitHub 公开活动，共 ${events.length} 条`);
   const latestRepository = events[0]?.repo?.name?.split('/').pop();
+  const eventCountLabel = events.length >= 100 ? '100+' : String(events.length);
+  const eventSummary = events.length >= 100 ? `至少 ${eventCountLabel}` : eventCountLabel;
+  total.textContent = eventCountLabel;
+  activeDays.textContent = String(activeDayCount);
+  repository.textContent = latestRepository ?? '暂无公开仓库';
+  status.textContent = cached ? 'Cached' : 'Live';
   summary.textContent = events.length
-    ? `${events.length} 条近期公开活动${latestRepository ? ` · ${latestRepository}` : ''}${cached ? ' · 缓存' : ''}`
+    ? `最近 30 天 ${eventSummary} 条公开事件${cached ? ' · 本地缓存' : ''}`
     : '最近 30 天暂无公开活动';
   card.dataset.state = 'loaded';
 }
@@ -153,14 +150,18 @@ function renderGitHubActivity(card: HTMLElement, events: GitHubEvent[], cached =
 function initGitHubActivity(card: HTMLElement): Cleanup {
   const username = card.dataset.githubUser;
   const summary = card.querySelector<HTMLElement>('[data-github-summary]');
-  if (!username || !summary) return () => undefined;
+  const status = card.querySelector<HTMLElement>('[data-github-status]');
+  if (!username || !summary || !status) return () => undefined;
 
   const cached = readGitHubCache();
   if (cached) renderGitHubActivity(card, cached.events, true);
   if (cached && Date.now() - cached.savedAt < GITHUB_CACHE_TTL) return () => undefined;
 
   card.dataset.state = 'loading';
-  if (!cached) summary.textContent = '正在加载公开活动…';
+  if (!cached) {
+    summary.textContent = '正在同步最近 30 天公开事件…';
+    status.textContent = 'Syncing';
+  }
 
   const controller = new AbortController();
   fetch(`https://api.github.com/users/${encodeURIComponent(username)}/events/public?per_page=100`, {
@@ -181,6 +182,7 @@ function initGitHubActivity(card: HTMLElement): Cleanup {
       if (controller.signal.aborted || cached) return;
       card.dataset.state = 'error';
       summary.textContent = '公开活动暂不可用，仍可访问 GitHub';
+      status.textContent = 'Offline';
       console.warn('[home] GitHub activity unavailable', error);
     });
 

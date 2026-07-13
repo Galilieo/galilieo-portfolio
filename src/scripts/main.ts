@@ -1,5 +1,5 @@
 import { initActiveSection } from './active-section';
-import { initArticleFilters } from './article-filter';
+import { initArticleNavigation } from './article-navigation';
 import { initPersistentControls, syncPersistentControlViews } from './global-controls';
 import { initHomeDashboard } from './home-dashboard';
 import { initHomeLiveData } from './home-live-data';
@@ -23,7 +23,7 @@ function initPage(): Cleanup {
     initNavigation(),
     initReveal(),
     initActiveSection(),
-    initArticleFilters(),
+    initArticleNavigation(),
     initHomeDashboard(),
     initHomeLiveData(),
     initIslandEffects(),

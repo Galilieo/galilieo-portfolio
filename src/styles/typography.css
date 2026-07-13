@@ -1,13 +1,22 @@
 .brand {
   justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: var(--display);
   font-size: clamp(29px, 2.2vw, 37px);
   line-height: 1;
   letter-spacing: -0.035em;
 }
 
-.brand span {
-  color: var(--accent);
+.brand__avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--line-strong) 76%, transparent);
+  border-radius: 11px;
+  object-fit: cover;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--home-glow) 42%, transparent);
 }
 
 .eyebrow {

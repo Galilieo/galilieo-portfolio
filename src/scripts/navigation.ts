@@ -7,7 +7,17 @@ export function initNavigation(): Cleanup {
   const siteNav = document.querySelector<HTMLElement>('.site-nav');
   if (!header || !menuToggle || !siteNav) return () => {};
   const navLinks = Array.from(siteNav.querySelectorAll<HTMLAnchorElement>('a'));
+  const mobileViewport = window.matchMedia('(max-width: 920px)');
   let focusFrame = 0;
+
+  const syncAvailability = () => {
+    const closedOnMobile = mobileViewport.matches && !siteNav.classList.contains('is-open');
+    siteNav.inert = closedOnMobile;
+    navLinks.forEach((link) => {
+      if (closedOnMobile) link.tabIndex = -1;
+      else link.removeAttribute('tabindex');
+    });
+  };
 
   const closeMenu = () => {
     if (focusFrame) {
@@ -16,28 +26,18 @@ export function initNavigation(): Cleanup {
     }
     header.classList.remove('menu-open');
     siteNav.classList.remove('is-open');
-    siteNav.style.removeProperty('clip-path');
-    siteNav.style.removeProperty('pointer-events');
-    siteNav.style.removeProperty('transform');
     menuToggle.setAttribute('aria-expanded', 'false');
     menuToggle.setAttribute('aria-label', '打开导航');
+    syncAvailability();
   };
 
   const onToggle = (event: MouseEvent) => {
     const willOpen = !siteNav.classList.contains('is-open');
     header.classList.toggle('menu-open', willOpen);
     siteNav.classList.toggle('is-open', willOpen);
-    if (willOpen) {
-      siteNav.style.clipPath = 'inset(0)';
-      siteNav.style.pointerEvents = 'auto';
-      siteNav.style.transform = 'translateY(0)';
-    } else {
-      siteNav.style.removeProperty('clip-path');
-      siteNav.style.removeProperty('pointer-events');
-      siteNav.style.removeProperty('transform');
-    }
     menuToggle.setAttribute('aria-expanded', String(willOpen));
     menuToggle.setAttribute('aria-label', willOpen ? '关闭导航' : '打开导航');
+    syncAvailability();
     if (willOpen && event.detail === 0) {
       focusFrame = requestAnimationFrame(() => {
         focusFrame = 0;
@@ -63,12 +63,16 @@ export function initNavigation(): Cleanup {
     header.classList.toggle('is-scrolled', window.scrollY > 16);
   };
 
+  const onViewportChange = () => closeMenu();
+
   navLinks.forEach((link) => link.addEventListener('click', closeMenu));
   menuToggle.addEventListener('click', onToggle);
   document.addEventListener('keydown', onKeydown);
   document.addEventListener('pointerdown', onPointerDown);
   window.addEventListener('scroll', updateHeader, { passive: true });
+  mobileViewport.addEventListener('change', onViewportChange);
   updateHeader();
+  syncAvailability();
 
   return () => {
     closeMenu();
@@ -77,5 +81,8 @@ export function initNavigation(): Cleanup {
     document.removeEventListener('keydown', onKeydown);
     document.removeEventListener('pointerdown', onPointerDown);
     window.removeEventListener('scroll', updateHeader);
+    mobileViewport.removeEventListener('change', onViewportChange);
+    siteNav.inert = false;
+    navLinks.forEach((link) => link.removeAttribute('tabindex'));
   };
 }

@@ -84,6 +84,7 @@ function createMusicController(root: HTMLElement): GlobalMusicController | undef
       .forEach((view) => (view.dataset.state = state));
     setText('[data-music-title]', track.title);
     setText('[data-music-artist]', track.artist);
+    setText('[data-music-album]', ` · ${track.album}`);
     setText('[data-music-current-time]', formatTime(elapsed));
     setText('[data-music-duration]', formatTime(total));
     setText('[data-music-position]', playablePosition());

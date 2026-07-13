@@ -1,0 +1,37 @@
+---
+import type { BlogCategorySummary } from '../../lib/blog-directory';
+
+interface Props {
+  categories: BlogCategorySummary[];
+  hrefPrefix?: string;
+  currentCategory?: string;
+  label: string;
+  className?: string;
+}
+
+const { categories, hrefPrefix = '', currentCategory, label, className } = Astro.props;
+---
+
+<nav class:list={['blog-category-directory', className]} aria-label={label}>
+  <p class="blog-category-directory__eyebrow">Category Index</p>
+  <ol>
+    {
+      categories.map((category) => (
+        <li>
+          <a
+            href={`${hrefPrefix}#${category.id}`}
+            data-category-link
+            data-category-id={category.id}
+            data-current-category-link={category.name === currentCategory ? '' : undefined}
+            aria-current={category.name === currentCategory ? 'location' : undefined}
+          >
+            <span>{category.name}</span>
+            <span class="blog-category-directory__count" aria-label={`${category.count} 篇文章`}>
+              {String(category.count).padStart(2, '0')}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>

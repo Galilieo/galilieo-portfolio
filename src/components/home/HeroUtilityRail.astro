@@ -12,12 +12,78 @@ const initialTrack = homeMusicTracks.find((track) => track.playable);
     data-github-user={siteConfig.githubUsername}
     data-state="idle"
   >
-    <span>GitHub activity</span>
-    <div class="home-utility__activity" data-github-grid aria-label="GitHub 公开活动需要联网加载">
+    <div class="home-utility__github-header">
+      <div class="home-utility__github-identity">
+        <span class="home-utility__github-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path
+              d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.73-1.55-2.57-.29-5.27-1.28-5.27-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.71 5.39-5.29 5.68.42.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z"
+            ></path>
+          </svg>
+        </span>
+        <span class="home-utility__github-title">
+          <span>GitHub snapshot</span>
+          <strong>@{siteConfig.githubUsername}</strong>
+        </span>
+      </div>
+      <span class="home-utility__github-range" aria-label="公开事件，最近 30 天">
+        Public events · 30d
+      </span>
     </div>
-    <a href={siteConfig.github} target="_blank" rel="noopener noreferrer" data-github-profile>
-      <span data-github-summary>访问 GitHub 查看公开活动</span>
-      <span aria-hidden="true">↗</span>
+
+    <div class="home-utility__github-body">
+      <div class="home-utility__github-metrics" aria-label="GitHub 公开事件摘要">
+        <div class="home-utility__github-total">
+          <strong data-github-total>—</strong>
+          <span>公开事件</span>
+        </div>
+        <dl class="home-utility__github-meta">
+          <div>
+            <dt>活跃日</dt>
+            <dd data-github-active-days>—</dd>
+          </div>
+          <div>
+            <dt>最近仓库</dt>
+            <dd data-github-repository>等待连接</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="home-utility__github-pulse">
+        <div class="home-utility__github-pulse-header">
+          <span>30-day pulse</span>
+          <span data-github-status>Waiting</span>
+        </div>
+        <div
+          class="home-utility__activity"
+          data-github-grid
+          aria-label="GitHub 公开事件需要联网加载"
+        >
+        </div>
+        <div class="home-utility__github-axis" aria-hidden="true">
+          <span>30 天前</span>
+          <span class="home-utility__github-legend">
+            <i></i><i></i><i></i><i></i>
+          </span>
+          <span>今天</span>
+        </div>
+      </div>
+    </div>
+
+    <a
+      class="home-utility__github-footer"
+      href={siteConfig.github}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-github-profile
+    >
+      <span data-github-summary aria-live="polite">连接 GitHub 后显示近期公开事件</span>
+      <span class="home-utility__github-arrow" aria-hidden="true">
+        View profile
+        <svg viewBox="0 0 16 16">
+          <path d="M3 13 13 3M6 3h7v7"></path>
+        </svg>
+      </span>
     </a>
   </article>
 
@@ -26,14 +92,16 @@ const initialTrack = homeMusicTracks.find((track) => track.playable);
     data-music-view="home"
     data-state={initialTrack ? 'paused' : 'unavailable'}
   >
-    <span>Listening shelf</span>
-    <a
-      class="home-utility__music-source"
-      href={homeMusicPlaylistUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      data-music-source>网易云 <span aria-hidden="true">↗</span></a
-    >
+    <div class="home-utility__music-header">
+      <span>Listening shelf</span>
+      <a
+        class="home-utility__music-source"
+        href={homeMusicPlaylistUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-music-source>网易云 <span aria-hidden="true">↗</span></a
+      >
+    </div>
     <div class="home-utility__track">
       <figure class="home-utility__cover">
         {
@@ -48,9 +116,42 @@ const initialTrack = homeMusicTracks.find((track) => track.playable);
         }
         <i aria-hidden="true">♪</i>
       </figure>
-      <div>
+      <div class="home-utility__track-copy">
         <strong data-music-title>{initialTrack?.title ?? '暂无可播放曲目'}</strong>
-        <p data-music-artist>{initialTrack?.artist ?? '请检查网易云歌单'}</p>
+        <p>
+          <span data-music-artist>{initialTrack?.artist ?? '请检查网易云歌单'}</span>
+          {
+            initialTrack && (
+              <span class="home-utility__album" data-music-album>
+                {' '}
+                · {initialTrack.album}
+              </span>
+            )
+          }
+        </p>
+      </div>
+      <div class="home-utility__controls" aria-label="音乐播放控制">
+        <button
+          type="button"
+          data-music-control
+          data-music-action="previous"
+          disabled
+          aria-label="上一首">‹</button
+        >
+        <button
+          type="button"
+          data-music-control
+          data-music-action="toggle"
+          disabled
+          aria-label="播放">▶</button
+        >
+        <button
+          type="button"
+          data-music-control
+          data-music-action="next"
+          disabled
+          aria-label="下一首">›</button
+        >
       </div>
     </div>
     <div class="home-utility__timeline">
@@ -65,21 +166,6 @@ const initialTrack = homeMusicTracks.find((track) => track.playable);
         disabled
       />
       <span data-music-duration>00:00</span>
-    </div>
-    <div class="home-utility__controls" aria-label="音乐播放控制">
-      <button
-        type="button"
-        data-music-control
-        data-music-action="previous"
-        disabled
-        aria-label="上一首">‹</button
-      >
-      <button type="button" data-music-control data-music-action="toggle" disabled aria-label="播放"
-        >▶</button
-      >
-      <button type="button" data-music-control data-music-action="next" disabled aria-label="下一首"
-        >›</button
-      >
     </div>
   </article>
 </aside>

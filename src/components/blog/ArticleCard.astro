@@ -1,12 +1,30 @@
 ---
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import alleyCover from '../../assets/images/covers/scene-alley.webp';
+import bloomCover from '../../assets/images/covers/scene-bloom.webp';
+import orbitCover from '../../assets/images/covers/scene-orbit.webp';
 import TagList from '../common/TagList.astro';
 
 interface Props {
   article: CollectionEntry<'blog'>;
+  headingLevel?: 2 | 3;
 }
 
-const { article } = Astro.props;
+const { article, headingLevel = 2 } = Astro.props;
+const Heading = headingLevel === 3 ? 'h3' : 'h2';
+const categoryArtwork = {
+  前端与移动端: { image: alleyCover, key: 'alley' },
+  实习复盘: { image: alleyCover, key: 'alley' },
+  工程笔记: { image: orbitCover, key: 'orbit' },
+  'AI 应用学习': { image: orbitCover, key: 'orbit' },
+  项目日志: { image: bloomCover, key: 'bloom' },
+} as const;
+const artwork =
+  categoryArtwork[article.data.category as keyof typeof categoryArtwork] ??
+  (article.data.cover
+    ? { image: article.data.cover, key: 'custom' }
+    : { image: bloomCover, key: 'bloom' });
 ---
 
 <article
@@ -17,13 +35,20 @@ const { article } = Astro.props;
   <a class="article-matrix-card__link" href={`/notes/${article.id}/`}>
     <div class="article-matrix-card__visual" aria-hidden="true">
       {
-        article.data.cover && (
-          <img class="article-matrix-card__cover" src={article.data.cover.src} alt="" />
+        (
+          <Image
+            class:list={[
+              'article-matrix-card__cover',
+              `article-matrix-card__cover--${artwork.key}`,
+            ]}
+            src={artwork.image}
+            alt=""
+            widths={[320, 480, 720]}
+            sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 1180px) 46vw, 430px"
+            loading="lazy"
+          />
         )
       }
-      <span class="article-matrix-card__number">
-        {String(article.data.order).padStart(2, '0')}
-      </span>
       <span class="article-matrix-card__category">{article.data.category}</span>
     </div>
     <div class="article-matrix-card__body">
@@ -33,7 +58,7 @@ const { article } = Astro.props;
           {article.data.publishedAt ?? article.data.homepageState}
         </time>
       </div>
-      <h2>{article.data.title}</h2>
+      <Heading class="article-matrix-card__title">{article.data.title}</Heading>
       <p class="article-matrix-card__description">{article.data.description}</p>
       <TagList items={article.data.tags} label={`${article.data.title}文章标签`} />
       <footer class="article-matrix-card__footer">

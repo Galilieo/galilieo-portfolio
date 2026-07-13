@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import TagList from '../common/TagList.astro';
 
@@ -20,7 +21,14 @@ const monogram = monograms[project.id] ?? project.data.title.slice(0, 2).toUpper
     <div class="project-matrix-card__visual" aria-hidden="true">
       {
         project.data.cover ? (
-          <img class="project-matrix-card__cover" src={project.data.cover.src} alt="" />
+          <Image
+            class:list={['project-matrix-card__cover', `project-matrix-card__cover--${project.id}`]}
+            src={project.data.cover}
+            alt=""
+            widths={[320, 480, 720]}
+            sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 1020px) 46vw, 360px"
+            loading="lazy"
+          />
         ) : (
           <span class="project-matrix-card__monogram">{monogram}</span>
         )

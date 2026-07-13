@@ -9,6 +9,7 @@ date: 2026-05
 status: 持续开发
 typeLabel: 个人长期项目
 role: Product / Full Stack
+cover: ../../assets/images/covers/scene-bloom.webp
 stack:
   - Java
   - Spring Boot

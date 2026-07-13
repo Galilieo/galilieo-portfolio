@@ -9,6 +9,7 @@ date: '2026'
 status: 持续维护
 typeLabel: 个人网站
 role: Personal Site / Notes
+cover: ../../assets/images/covers/scene-orbit.webp
 stack:
   - Astro
   - TypeScript

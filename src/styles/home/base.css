@@ -15,12 +15,10 @@ body:has(#main-content > .home-dashboard) {
   --line-strong: var(--home-border-strong);
   --accent: var(--home-accent);
   --accent-soft: var(--home-accent-soft);
-  /* Demo-only owner-supplied placeholder. Source and release boundary live in docs/design-guide.md. */
   background-color: var(--home-bg);
   background-image:
     radial-gradient(circle at 50% 12%, var(--home-glow), transparent 34rem),
-    var(--home-demo-background-overlay),
-    url('../../assets/images/home/demo-background-placeholder.webp');
+    var(--home-background-overlay), url('../../assets/images/home/demo-background-placeholder.webp');
   background-position:
     center 12%,
     center,

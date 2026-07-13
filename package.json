@@ -10,6 +10,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "lint": "eslint .",
+    "check:blog": "node scripts/check-blog-navigation.mjs",
     "check:home": "node scripts/check-home-structure.mjs",
     "sync:music": "node scripts/sync-netease-playlist.mjs 18145116776",
     "verify": "node scripts/verify.mjs",

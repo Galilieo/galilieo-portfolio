@@ -19,9 +19,8 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
   <main class="page-main interior-page interior-page--projects" id="main-content">
     <SectionHeading
       eyebrow="Projects"
-      title="项目不是功能清单，而是我解决问题的过程。"
-      titleLines={['项目不是功能清单，', '而是我解决问题的过程。']}
-      description="这里只放真实完成、真实参与或正在持续开发的内容。"
+      title="做过的项目，解决过的问题。"
+      description="记录我做过、参与过和仍在推进的项目。"
     />
     <div class="project-grid">
       {projects.map((project) => <ProjectCard project={project} />)}

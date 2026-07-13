@@ -1,18 +1,23 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import {
+  getBlogCategorySummaries,
+  type BlogCategorySummary,
+} from '../../lib/blog-directory';
 
 export async function getStaticPaths() {
-  const articles = (await getCollection('blog'))
-    .filter((article) => !article.data.draft)
-    .sort((a, b) => a.data.order - b.data.order);
+  const publicArticles = (await getCollection('blog')).filter((article) => !article.data.draft);
+  const navigationArticles = [...publicArticles].sort((a, b) => a.data.order - b.data.order);
+  const categorySummaries = getBlogCategorySummaries(publicArticles);
 
-  return articles.map((article, index) => ({
+  return navigationArticles.map((article, index) => ({
     params: { slug: article.id },
     props: {
       article,
-      previous: articles[index - 1],
-      next: articles[index + 1],
+      previous: navigationArticles[index - 1],
+      next: navigationArticles[index + 1],
+      categorySummaries,
     },
   }));
 }
@@ -21,12 +26,19 @@ interface Props {
   article: CollectionEntry<'blog'>;
   previous?: CollectionEntry<'blog'>;
   next?: CollectionEntry<'blog'>;
+  categorySummaries: BlogCategorySummary[];
 }
 
-const { article, previous, next } = Astro.props;
-const { Content } = await render(article);
+const { article, previous, next, categorySummaries } = Astro.props;
+const { Content, headings } = await render(article);
 ---
 
-<ArticleLayout article={article} previous={previous} next={next}>
+<ArticleLayout
+  article={article}
+  previous={previous}
+  next={next}
+  categories={categorySummaries}
+  headings={headings}
+>
   <Content />
 </ArticleLayout>

@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import avatar from '../../assets/images/profile/galilieo-avatar.webp';
 import MobileNavigation from './MobileNavigation.astro';
 import { siteConfig } from '../../config/site';
 // 用途：网站品牌、主导航和主题/菜单控制；数据来源：网站配置与固定交互结构；后续品牌和按钮在本文件修改。
@@ -6,7 +8,10 @@ import { siteConfig } from '../../config/site';
 
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="brand" href="/" aria-label="返回首页">{siteConfig.name}</a>
+    <a class="brand" href="/" aria-label="返回首页">
+      <Image class="brand__avatar" src={avatar} alt="" width={36} height={36} loading="eager" />
+      {siteConfig.name}
+    </a>
 
     <MobileNavigation />
 

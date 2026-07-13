@@ -20,10 +20,11 @@ export const siteConfig = {
     'Galilieo 的个人作品、开发笔记与探索记录，展示 AI 应用开发、真实项目、实习实践和持续学习。',
   url: 'https://galilieo.heart-island.cn',
   email: 'jiangdavis021@gmail.com',
+  qqEmail: '2930382766@qq.com',
   github: 'https://github.com/Galilieo',
   githubUsername: 'Galilieo',
   heartIsland: 'https://heart-island.cn',
-  defaultSeoImage: '/images/island-reference-no-heart-hd.png',
+  defaultSeoImage: '/images/galilieo-header.jpg',
   author: {
     name: 'Galilieo',
     location: 'Shanghai, China',

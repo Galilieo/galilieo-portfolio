@@ -3,10 +3,9 @@ title: '心屿为什么需要多轮对话和轻量长期记忆'
 description: '心屿为什么需要多轮对话和轻量长期记忆'
 publishedAt: 2026-07-10
 category: 项目日志
-cover: ../../assets/images/blog/heart-island-memory.svg
 tags:
+  - AI 应用
   - 多轮对话
-  - 轻量长期记忆
 draft: false
 featured: true
 order: 1
