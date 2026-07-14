@@ -112,7 +112,7 @@
 ```text
 Header
 Dashboard row 1: Profile card | GitHub + Music cards
-Dashboard row 2: Featured Works carousel | Latest Notes carousel
+Dashboard row 2: Selected Works carousel | Selected Writing carousel
 Optional extension grid（当前不渲染）
 Compact status strip
 Footer
@@ -144,9 +144,9 @@ Footer
 - 音乐卡当前读取网易云歌单生成的静态清单，并与全站左下持久播放器双向同步；全站只有一个 `<audio>`，提供播放、暂停、进度、上下曲与紧凑歌单。它不自动播放，Astro 页面切换时持续播放，Reduced Motion 下不旋转封面。
 - 时间、位置和天气位于底部状态条：静态回退为上海，浏览器端使用访客时区、IP 城市级粗定位和 Open-Meteo 当前天气；定位或天气失败时回退而不伪造数据。
 
-### 第二行：项目与笔记轮播
+### 第二行：主要项目与精选文章
 
-- 左侧 Featured Works 为主要内容卡，默认展示 Heart Island，之后可切换其他真实项目；右侧 Latest Notes 一次只展示一篇公开文章。
+- 左侧 Selected Works 为主要内容卡，默认展示 Heart Island，之后可切换其他真实项目；右侧 Selected Writing 优先展示 `featured` 公开文章，再以近期文章补足三篇。
 - 两张卡统一使用全幅视觉、底部渐变信息层和圆点状态，不保留可见的前后按钮或页码。整张视觉卡进入详情，圆点位于链接外部，不能形成嵌套交互。
 - 项目和文章在配置 `cover` 后优先显示真实封面；缺少封面时，Heart Island 使用受保护的现有 SVG，其他内容使用双主题 CSS 占位，不借用参考站素材。
 - 两张卡自动轮播但不追求快速切换：项目与文章使用错开的约 7 秒周期，普通切换采用约 `320ms` 的低幅方向交叉淡入淡出。悬停、键盘焦点、页面进入后台或 `prefers-reduced-motion: reduce` 时停止自动切换；Reduced Motion 下手动选择立即生效，圆点和左右方向键保持可用。

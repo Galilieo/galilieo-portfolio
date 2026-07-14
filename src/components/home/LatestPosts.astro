@@ -2,10 +2,13 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
-const latestPosts = (await getCollection('blog'))
+const publishedPosts = (await getCollection('blog'))
   .filter((post) => !post.data.draft && post.data.publishedAt)
-  .sort((a, b) => String(b.data.publishedAt).localeCompare(String(a.data.publishedAt)))
-  .slice(0, 3);
+  .sort((a, b) => String(b.data.publishedAt).localeCompare(String(a.data.publishedAt)));
+const selectedPosts = [
+  ...publishedPosts.filter((post) => post.data.featured),
+  ...publishedPosts.filter((post) => !post.data.featured),
+].slice(0, 3);
 ---
 
 <section
@@ -20,22 +23,22 @@ const latestPosts = (await getCollection('blog'))
   <a class="home-carousel__section-link" href="/blog/" aria-label="查看全部文章"></a>
   <header class="home-carousel__header">
     <div>
-      <p>Latest notes</p>
-      <h2 id="latest-posts-title">最近笔记</h2>
+      <p>Selected writing</p>
+      <h2 id="latest-posts-title">精选文章</h2>
     </div>
   </header>
 
   {
-    latestPosts.length > 0 ? (
+    selectedPosts.length > 0 ? (
       <div class="home-carousel__viewport">
-        {latestPosts.map((post, index) => (
+        {selectedPosts.map((post, index) => (
           <article
             class="home-carousel__slide"
             data-home-slide
             hidden={index !== 0}
             role="group"
             aria-roledescription="slide"
-            aria-label={`${index + 1} / ${latestPosts.length}`}
+            aria-label={`${index + 1} / ${selectedPosts.length}`}
           >
             <a class="home-carousel__card-link" href={`/notes/${post.id}/`}>
               <div
@@ -86,9 +89,9 @@ const latestPosts = (await getCollection('blog'))
   }
 
   {
-    latestPosts.length > 1 && (
+    selectedPosts.length > 1 && (
       <div class="home-carousel__dots" aria-label="选择文章">
-        {latestPosts.map((post, index) => (
+        {selectedPosts.map((post, index) => (
           <button
             type="button"
             data-home-dot

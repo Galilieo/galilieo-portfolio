@@ -46,11 +46,24 @@ function initSectionObserver(
 function initCategoryObserver(): Cleanup {
   const page = document.querySelector<HTMLElement>('.interior-page--blog');
   if (!page) return () => {};
-  const sections = Array.from(
-    page.querySelectorAll<HTMLElement>('[data-blog-category-section]'),
-  );
   const links = Array.from(page.querySelectorAll<HTMLAnchorElement>('[data-category-link]'));
-  return initSectionObserver(sections, links, (section) => section.id);
+  let cleanupObserver: Cleanup = () => {};
+
+  const resetObserver = () => {
+    cleanupObserver();
+    const sections = Array.from(
+      page.querySelectorAll<HTMLElement>('[data-blog-category-section]'),
+    ).filter((section) => !section.hidden);
+    cleanupObserver = initSectionObserver(sections, links, (section) => section.id);
+  };
+
+  resetObserver();
+  document.addEventListener('blog:filter-change', resetObserver);
+
+  return () => {
+    document.removeEventListener('blog:filter-change', resetObserver);
+    cleanupObserver();
+  };
 }
 
 function initHeadingObserver(): Cleanup {

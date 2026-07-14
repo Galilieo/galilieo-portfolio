@@ -1,4 +1,21 @@
 /* Homepage dashboard responsive layout. */
+@media (min-width: 1000px) {
+  .home-profile,
+  .home-utility {
+    min-height: 0;
+  }
+
+  .home-profile__content {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .home-utility {
+    grid-template-rows: auto auto;
+    align-content: start;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
   .home-utility__track {
     grid-template-columns: 60px minmax(0, 1fr) auto;

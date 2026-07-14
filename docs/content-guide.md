@@ -17,9 +17,11 @@
 
 `HomeProfileCard.astro` 读取 `homeProfile`，并从 Content Collections 计算 Works / Notes 数量；`HeroUtilityRail.astro` 显示 GitHub Public Events 与全局网易云播放器的首页同步视图；`HomeStatusStrip.astro` 以上海作为无脚本/网络失败回退，并在浏览器端增强为访客粗略位置、当地时间与 Open-Meteo 天气。不要在组件中再写第二份同义个人文案；独立关于页的详细介绍仍由 `src/components/home/AboutSection.astro` 维护。
 
+个人成长节点集中在 `src/data/personal-timeline.ts`，由归档页“个人轨迹”视图读取；About 只保留头像、身份、详细介绍、事实和入口，不再维护第二份时间线。`/campus/` 是在校经历页，只展示已经确认的学习主线和真实项目；课程、比赛、社团、奖项或证书必须获得真实信息后才能补充。
+
 首页音乐清单位于 `src/data/music.ts`，不要手工维护歌曲元数据。更新网易云歌单后运行 `pnpm run sync:music`，脚本会读取歌单 `18145116776`、检测站外播放可用性并重写静态清单；构建与访客访问页面时不请求网易云元数据接口。
 
-博客列表当前按 Category 从 `src/assets/images/covers/` 选择场景背景：前端与移动端/实习复盘使用巷道图，工程笔记/AI 应用学习使用太空舱图，项目日志使用花海图；未映射的分类优先使用文章 frontmatter 的 `cover`，没有独立封面时回退到花海图。新增公开素材前必须确认许可证、作者和公开使用范围。
+博客列表优先使用文章 frontmatter 的 `cover`；没有独立封面时，根据 Category 选择巷道、太空舱或花海作为主场景，并在同分类文章中轮换另外两张现有场景图，避免连续重复同一封面。新增公开素材前必须确认许可证、作者和公开使用范围。
 
 修改姓名、身份或方向时同时检查 `siteConfig` 与 `src/data/home.ts`，避免首屏、关于区和 SEO 信息互相矛盾。
 
@@ -84,14 +86,14 @@ draft: false
 homepageState: 已发布
 ```
 
-`publishedAt`、`updatedAt` 支持 `YYYY`、`YYYY-MM` 或 `YYYY-MM-DD`，但公开文章必须有 `publishedAt`。`readingTime` 是可选正整数。当前 `featured` 字段尚未参与页面筛选或样式；不要依赖它改变展示位置。
+`publishedAt`、`updatedAt` 支持 `YYYY`、`YYYY-MM` 或 `YYYY-MM-DD`，但公开文章必须有 `publishedAt`。`readingTime` 是可选正整数。首页“精选文章”优先展示 `featured: true` 的公开文章，再以近期文章补足三篇；不要给过多文章同时设置 `featured`。
 
 - `category` 是文章的唯一主分类，用于 `/blog/` 与 `/notes/` 的目录分组。优先复用已有分类，避免为单篇文章创建含义相近的新分类。
-- Category 侧栏只在宽桌面展示；小屏直接阅读分类分组，不为分类数量增加额外折叠目录。
-- `tags` 是辅助主题词，公开文章保留 2–3 个主要 Tag；Tag 显示在卡片和文章头部，不创建独立筛选入口。
+- 博客目录在宽桌面使用左侧吸顶面板，1024px 及以下转为内容上方的横向索引；Category 链接定位真实分组。
+- `tags` 是辅助主题词，公开文章保留 2–3 个主要 Tag；博客目录的 Tags 面板提供渐进增强筛选，切回 Category 时恢复全部文章。无 JavaScript 时所有文章仍完整输出。
 - 正文使用连续、清晰的 H2/H3 层级生成文章目录，不跳级，也不使用标题只做视觉加粗。
 
-公开文章会进入 `/notes/`、`/blog/`、文章详情、首页 Latest Notes 轮播、独立归档页、RSS 和 sitemap。草稿不会生成公开详情页，也不会进入首页、归档、RSS 或 sitemap。
+公开文章会进入 `/notes/`、`/blog/`、文章详情、首页 Selected Writing 轮播、归档页“博客笔记”时间线、RSS 和 sitemap。归档页使用原生 Tabs 在博客笔记与个人轨迹之间切换；无 JavaScript 时两套时间线都完整显示。草稿不会生成公开详情页，也不会进入首页、归档、RSS 或 sitemap。
 
 ## Markdown 与 MDX
 
@@ -107,7 +109,7 @@ homepageState: 已发布
 cover: ../../assets/images/projects/my-project.jpg
 ```
 
-`cover` 已在项目和博客 schema 中定义。项目卡直接渲染 frontmatter 封面；博客卡优先使用 Category 背景映射，未映射分类再回退到文章 `cover` 或默认花海图。列表卡通过 Astro `Image` 生成响应式资源。详情 Layout 仍未使用封面；默认 SEO 分享图由 `siteConfig.defaultSeoImage` 指向 `public/images/galilieo-header.jpg`。
+`cover` 已在项目和博客 schema 中定义。项目卡直接渲染 frontmatter 封面；博客卡优先使用文章 `cover`，没有时按 Category 场景序列轮换，未知分类回退到花海序列。列表卡通过 Astro `Image` 生成响应式资源。详情 Layout 仍未使用封面；默认 SEO 分享图由 `siteConfig.defaultSeoImage` 指向 `public/images/galilieo-header.jpg`。
 
 ## 修改导航
 

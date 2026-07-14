@@ -1,8 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
+import TagList from '../../components/common/TagList.astro';
 import SectionHeading from '../../components/common/SectionHeading.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
+import { personalTimeline } from '../../data/personal-timeline';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const allEntries = (await getCollection('blog'))
@@ -13,7 +15,6 @@ const allEntries = (await getCollection('blog'))
     return dateB.localeCompare(dateA);
   });
 
-// 按年月分组
 const grouped: Record<string, typeof allEntries> = {};
 for (const entry of allEntries) {
   const key = (entry.data.publishedAt ?? '未归档').slice(0, 7);
@@ -24,7 +25,7 @@ for (const entry of allEntries) {
 
 <BaseLayout
   title="归档 — Galilieo"
-  description="按时间线浏览所有已发布文章。"
+  description="沿时间线浏览 Galilieo 的公开笔记与个人成长轨迹。"
   canonicalPath="/archive/"
 >
   <a class="skip-link" href="#main-content">跳到主要内容</a>
@@ -33,41 +34,140 @@ for (const entry of allEntries) {
     <SectionHeading
       eyebrow="Archive"
       title="时间线归档"
-      description="按发布时间排列的所有已发布文章。"
+      description="在同一条时间轴语言中，分别查看公开笔记与个人成长轨迹。"
     />
 
-    {
-      allEntries.length > 0 ? (
-        <div class="archive-chain">
-          {Object.entries(grouped).map(([month, entries]) => (
-            <section class="archive-chain__month">
-              <h2 class="archive-chain__month-title">{month}</h2>
-              <ol class="archive-chain__list">
-                {entries.map((entry) => (
-                  <li class="archive-chain__item reveal">
-                    <a class="archive-chain__card" href={`/notes/${entry.id}/`}>
+    <div class="archive-timeline" data-archive-timeline>
+      <div class="archive-view-switch" role="tablist" aria-label="选择归档时间线">
+        <button
+          class="is-active"
+          id="archive-tab-blog"
+          type="button"
+          role="tab"
+          aria-controls="archive-panel-blog"
+          aria-selected="true"
+          data-archive-tab="blog"
+        >
+          <span>博客笔记</span>
+          <span>{String(allEntries.length).padStart(2, '0')}</span>
+        </button>
+        <button
+          id="archive-tab-personal"
+          type="button"
+          role="tab"
+          aria-controls="archive-panel-personal"
+          aria-selected="false"
+          tabindex="-1"
+          data-archive-tab="personal"
+        >
+          <span>个人轨迹</span>
+          <span>{String(personalTimeline.length).padStart(2, '0')}</span>
+        </button>
+      </div>
+
+      <section
+        class="archive-timeline-panel"
+        id="archive-panel-blog"
+        role="tabpanel"
+        aria-labelledby="archive-tab-blog"
+        data-archive-panel="blog"
+        data-active
+      >
+        <header class="archive-timeline-panel__heading">
+          <div>
+            <p>Published Notes</p>
+            <h2>博客笔记</h2>
+          </div>
+          <span>{String(allEntries.length).padStart(2, '0')} entries</span>
+        </header>
+
+        {
+          allEntries.length > 0 ? (
+            <div class="archive-chain archive-chain--blog">
+              {Object.entries(grouped).map(([month, entries]) => (
+                <section class="archive-chain__month">
+                  <h3 class="archive-chain__month-title">{month}</h3>
+                  <ol class="archive-chain__list">
+                    {entries.map((entry) => (
+                      <li class="archive-chain__item reveal">
+                        <a class="archive-chain__card" href={`/notes/${entry.id}/`}>
+                          <div class="archive-chain__meta">
+                            <time datetime={entry.data.publishedAt ?? ''}>
+                              {(entry.data.publishedAt ?? '').slice(0, 10)}
+                            </time>
+                            <span>{entry.data.category}</span>
+                          </div>
+                          <h4>{entry.data.title}</h4>
+                          <p class="archive-chain__description">{entry.data.description}</p>
+                          <footer class="archive-chain__footer">
+                            <TagList
+                              items={entry.data.tags.slice(0, 2)}
+                              label={`${entry.data.title}文章标签`}
+                            />
+                            <span aria-hidden="true">阅读笔记 →</span>
+                          </footer>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              ))}
+              <span class="archive-chain__end" aria-hidden="true">
+                Present
+              </span>
+            </div>
+          ) : (
+            <div class="empty-state reveal">暂无已发布文章。</div>
+          )
+        }
+      </section>
+
+      <section
+        class="archive-timeline-panel archive-timeline-panel--personal"
+        id="archive-panel-personal"
+        role="tabpanel"
+        aria-labelledby="archive-tab-personal"
+        data-archive-panel="personal"
+      >
+        <header class="archive-timeline-panel__heading" id="personal-timeline">
+          <div>
+            <p>Personal Path</p>
+            <h2>个人轨迹</h2>
+          </div>
+          <span>{String(personalTimeline.length).padStart(2, '0')} milestones</span>
+        </header>
+
+        <div class="archive-chain archive-chain--personal">
+          <section class="archive-chain__month">
+            <h3 class="archive-chain__month-title">2024 — Present</h3>
+            <ol class="archive-chain__list">
+              {
+                personalTimeline.map((entry) => (
+                  <li
+                    class="archive-chain__item archive-chain__item--personal reveal"
+                    id={entry.id}
+                  >
+                    <a class="archive-chain__card" href={entry.href}>
                       <div class="archive-chain__meta">
-                        <time datetime={entry.data.publishedAt ?? ''}>
-                          {(entry.data.publishedAt ?? '').slice(0, 10)}
-                        </time>
-                        <span>{entry.data.category}</span>
+                        <time datetime={entry.dateTime}>{entry.period}</time>
+                        <span>{entry.phase}</span>
                       </div>
-                      <h3>{entry.data.title}</h3>
-                      <p class="archive-chain__description">{entry.data.description}</p>
+                      <h4>{entry.title}</h4>
+                      <p class="archive-chain__description">{entry.description}</p>
+                      <footer class="archive-chain__footer">
+                        <span>Personal Record</span>
+                        <span>{entry.destination} →</span>
+                      </footer>
                     </a>
                   </li>
-                ))}
-              </ol>
-            </section>
-          ))}
-          <span class="archive-chain__end" aria-hidden="true">
-            End
-          </span>
+                ))
+              }
+            </ol>
+          </section>
+          <span class="archive-chain__end" aria-hidden="true">Present</span>
         </div>
-      ) : (
-        <div class="empty-state reveal">暂无已发布文章。</div>
-      )
-    }
+      </section>
+    </div>
   </main>
   <SiteFooter />
 </BaseLayout>

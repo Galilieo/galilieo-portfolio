@@ -9,27 +9,50 @@ import TagList from '../common/TagList.astro';
 interface Props {
   article: CollectionEntry<'blog'>;
   headingLevel?: 2 | 3;
+  artworkIndex?: number;
 }
 
-const { article, headingLevel = 2 } = Astro.props;
+const { article, headingLevel = 2, artworkIndex = 0 } = Astro.props;
 const Heading = headingLevel === 3 ? 'h3' : 'h2';
-const categoryArtwork = {
-  前端与移动端: { image: alleyCover, key: 'alley' },
-  实习复盘: { image: alleyCover, key: 'alley' },
-  工程笔记: { image: orbitCover, key: 'orbit' },
-  'AI 应用学习': { image: orbitCover, key: 'orbit' },
-  项目日志: { image: bloomCover, key: 'bloom' },
+const artworkSequences = {
+  前端与移动端: [
+    { image: alleyCover, key: 'alley' },
+    { image: orbitCover, key: 'orbit' },
+    { image: bloomCover, key: 'bloom' },
+  ],
+  实习复盘: [
+    { image: alleyCover, key: 'alley' },
+    { image: bloomCover, key: 'bloom' },
+    { image: orbitCover, key: 'orbit' },
+  ],
+  工程笔记: [
+    { image: orbitCover, key: 'orbit' },
+    { image: bloomCover, key: 'bloom' },
+    { image: alleyCover, key: 'alley' },
+  ],
+  'AI 应用学习': [
+    { image: orbitCover, key: 'orbit' },
+    { image: alleyCover, key: 'alley' },
+    { image: bloomCover, key: 'bloom' },
+  ],
+  项目日志: [
+    { image: bloomCover, key: 'bloom' },
+    { image: alleyCover, key: 'alley' },
+    { image: orbitCover, key: 'orbit' },
+  ],
 } as const;
-const artwork =
-  categoryArtwork[article.data.category as keyof typeof categoryArtwork] ??
-  (article.data.cover
-    ? { image: article.data.cover, key: 'custom' }
-    : { image: bloomCover, key: 'bloom' });
+const categorySequence =
+  artworkSequences[article.data.category as keyof typeof artworkSequences] ??
+  artworkSequences['项目日志'];
+const artwork = article.data.cover
+  ? { image: article.data.cover, key: 'custom' }
+  : categorySequence[artworkIndex % categorySequence.length];
 ---
 
 <article
   class="article-matrix-card reveal"
   data-article-card
+  data-blog-entry
   data-article-tags={JSON.stringify(article.data.tags)}
 >
   <a class="article-matrix-card__link" href={`/notes/${article.id}/`}>

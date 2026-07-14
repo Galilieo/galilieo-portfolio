@@ -1,16 +1,29 @@
 ---
-// 用途：关于页个人档案、真实介绍与成长时间线；后续个人介绍在本文件修改。
+// 用途：关于页个人档案与真实介绍；成长时间线统一由归档页维护。
+import { Image } from 'astro:assets';
+import avatar from '../../assets/images/profile/galilieo-avatar.webp';
 import { siteConfig } from '../../config/site';
 ---
 
 <section class="about-dossier" aria-labelledby="about-title">
   <header class="about-dossier__identity reveal">
     <div class="about-dossier__identity-content">
-      <div class="about-dossier__mark" aria-hidden="true">G</div>
+      <Image
+        class="about-dossier__avatar"
+        src={avatar}
+        alt={`${siteConfig.author.name} 的头像`}
+        width={512}
+        height={512}
+        loading="eager"
+      />
       <div>
         <p class="about-dossier__eyebrow">Identity / About</p>
         <h1 id="about-title">{siteConfig.author.name}</h1>
         <p class="about-dossier__role">{siteConfig.author.role}</p>
+        <nav class="about-dossier__identity-links" aria-label="个人经历入口">
+          <a href="/archive/?view=personal#personal-timeline">查看个人轨迹 →</a>
+          <a href="/campus/">在校经历 →</a>
+        </nav>
       </div>
     </div>
   </header>
@@ -61,55 +74,9 @@ import { siteConfig } from '../../config/site';
     </aside>
   </div>
 
-  <section class="about-dossier__timeline reveal" aria-labelledby="about-timeline-title">
-    <p class="about-dossier__section-label">Timeline / 03</p>
-    <h2 id="about-timeline-title">学习与实践</h2>
-    <ol class="about-dossier__timeline-list">
-      <li class="about-dossier__milestone" data-timeline-step>
-        <span class="about-dossier__timeline-node" aria-hidden="true"></span>
-        <div class="about-dossier__milestone-meta">
-          <p class="about-dossier__milestone-date">
-            <time datetime="2024-09">2024.09</time><span>— 至今</span>
-          </p>
-          <p class="about-dossier__milestone-phase">01 / Learning</p>
-        </div>
-        <div class="about-dossier__milestone-copy">
-          <h3>软件工程学习</h3>
-          <p>从前后端基础出发，持续理解页面、接口、数据与交付之间的完整关系。</p>
-        </div>
-      </li>
-      <li class="about-dossier__milestone" data-timeline-step>
-        <span class="about-dossier__timeline-node" aria-hidden="true"></span>
-        <div class="about-dossier__milestone-meta">
-          <p class="about-dossier__milestone-date">
-            <time datetime="2026-04">2026.04</time><span>— 至今</span>
-          </p>
-          <p class="about-dossier__milestone-phase">02 / Building</p>
-        </div>
-        <div class="about-dossier__milestone-copy">
-          <h3>持续开发心屿</h3>
-          <p>围绕情绪记录、AI 回复、社区互动和长期记忆逐步构建个人长期项目。</p>
-        </div>
-      </li>
-      <li class="about-dossier__milestone" data-timeline-step>
-        <span class="about-dossier__timeline-node" aria-hidden="true"></span>
-        <div class="about-dossier__milestone-meta">
-          <p class="about-dossier__milestone-date">
-            <time datetime="2026-06">2026.06</time><span>— 至今</span>
-          </p>
-          <p class="about-dossier__milestone-phase">03 / Practice</p>
-        </div>
-        <div class="about-dossier__milestone-copy">
-          <h3>AI 产品开发实习</h3>
-          <p>参与跨平台 AI 聊天产品的页面维护、问题排查、移动端适配与自测协作。</p>
-        </div>
-      </li>
-    </ol>
-  </section>
-
   <footer class="about-dossier__contact reveal">
     <div>
-      <p class="about-dossier__section-label">Contact / 04</p>
+      <p class="about-dossier__section-label">Contact / 03</p>
       <h2>继续看看，或者和我聊聊。</h2>
     </div>
     <div class="about-dossier__links">

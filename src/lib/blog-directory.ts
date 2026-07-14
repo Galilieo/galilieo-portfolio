@@ -12,6 +12,11 @@ export interface BlogCategoryGroup extends BlogCategorySummary {
   articles: BlogArticle[];
 }
 
+export interface BlogTagSummary {
+  name: string;
+  count: number;
+}
+
 export function sortBlogArticles(articles: BlogArticle[]): BlogArticle[] {
   return [...articles].sort((articleA, articleB) =>
     (articleB.data.publishedAt ?? '').localeCompare(articleA.data.publishedAt ?? ''),
@@ -52,4 +57,16 @@ export function createBlogCategoryGroups(articles: BlogArticle[]): BlogCategoryG
 
 export function getBlogCategorySummaries(articles: BlogArticle[]): BlogCategorySummary[] {
   return createBlogCategoryGroups(articles).map(({ name, id, count }) => ({ name, id, count }));
+}
+
+export function getBlogTagSummaries(articles: BlogArticle[]): BlogTagSummary[] {
+  const tagCounts = new Map<string, number>();
+
+  for (const article of articles) {
+    for (const tag of article.data.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+
+  return [...tagCounts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((tagA, tagB) => tagB.count - tagA.count || tagA.name.localeCompare(tagB.name, 'zh-CN'));
 }

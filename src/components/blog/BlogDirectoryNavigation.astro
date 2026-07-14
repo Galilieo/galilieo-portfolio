@@ -1,0 +1,100 @@
+---
+import type { BlogCategorySummary, BlogTagSummary } from '../../lib/blog-directory';
+
+interface Props {
+  categories: BlogCategorySummary[];
+  tags: BlogTagSummary[];
+  totalCount: number;
+}
+
+const { categories, tags, totalCount } = Astro.props;
+---
+
+<nav class="blog-directory-navigation" data-blog-directory-navigation aria-label="博客浏览目录">
+  <div class="blog-directory-navigation__tabs" role="tablist" aria-label="目录类型">
+    <button
+      type="button"
+      role="tab"
+      id="blog-directory-category-tab"
+      aria-selected="true"
+      aria-controls="blog-directory-category-panel"
+      data-blog-directory-tab="category"
+    >
+      Category
+    </button>
+    <button
+      type="button"
+      role="tab"
+      id="blog-directory-tag-tab"
+      aria-selected="false"
+      aria-controls="blog-directory-tag-panel"
+      data-blog-directory-tab="tags"
+      tabindex="-1"
+    >
+      Tags
+    </button>
+  </div>
+
+  <div
+    class="blog-directory-navigation__panel"
+    id="blog-directory-category-panel"
+    role="tabpanel"
+    aria-labelledby="blog-directory-category-tab"
+    data-blog-directory-panel="category"
+  >
+    <p class="blog-directory-navigation__eyebrow">Category Index</p>
+    <ol>
+      {
+        categories.map((category) => (
+          <li>
+            <a href={`#${category.id}`} data-category-link data-category-id={category.id}>
+              <span>{category.name}</span>
+              <span
+                class="blog-directory-navigation__count"
+                aria-label={`${category.count} 篇文章`}
+              >
+                {String(category.count).padStart(2, '0')}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <div
+    class="blog-directory-navigation__panel"
+    id="blog-directory-tag-panel"
+    role="tabpanel"
+    aria-labelledby="blog-directory-tag-tab"
+    data-blog-directory-panel="tags"
+    hidden
+  >
+    <p class="blog-directory-navigation__eyebrow">Tag Cross Index</p>
+    <ul class="blog-directory-navigation__tags">
+      <li>
+        <button type="button" data-blog-tag-filter="" aria-pressed="true">
+          <span>全部文章</span>
+          <span class="blog-directory-navigation__count">{String(totalCount).padStart(2, '0')}</span
+          >
+        </button>
+      </li>
+      {
+        tags.map((tag) => (
+          <li>
+            <button type="button" data-blog-tag-filter={tag.name} aria-pressed="false">
+              <span>{tag.name}</span>
+              <span class="blog-directory-navigation__count">
+                {String(tag.count).padStart(2, '0')}
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <p class="blog-directory-navigation__status" data-blog-filter-status aria-live="polite">
+    共 {String(totalCount).padStart(2, '0')} 篇公开文章
+  </p>
+</nav>

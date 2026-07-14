@@ -1,0 +1,128 @@
+---
+import { getCollection } from 'astro:content';
+import SectionHeading from '../components/common/SectionHeading.astro';
+import TagList from '../components/common/TagList.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projectIds = new Set(['heart-island', 'galilieo-portfolio']);
+const learningProjects = (await getCollection('projects'))
+  .filter((project) => projectIds.has(project.id))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="在校经历 — Galilieo"
+  description="Galilieo 在软件工程学习期间形成的学习主线与实践记录。"
+  canonicalPath="/campus/"
+>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <SiteHeader />
+  <main class="page-main interior-page interior-page--campus" id="main-content">
+    <SectionHeading
+      eyebrow="Campus Record"
+      title="在校经历"
+      description="不罗列整张课表，只记录软件工程学习期间真正形成的能力与实践。"
+    />
+
+    <div class="campus-record">
+      <aside class="campus-record__index reveal" aria-label="在校经历页面目录">
+        <p>Page Index</p>
+        <nav>
+          <a href="#learning-focus"><span>学习主线</span><span>01</span></a>
+          <a href="#learning-practice"><span>实践入口</span><span>02</span></a>
+          <a href="#current-focus"><span>当前关注</span><span>03</span></a>
+        </nav>
+        <a class="campus-record__back" href="/archive/?view=personal#personal-timeline">
+          ← 返回个人轨迹
+        </a>
+      </aside>
+
+      <div class="campus-record__content">
+        <section class="campus-record__section reveal" id="learning-focus">
+          <header class="campus-record__section-heading">
+            <div>
+              <p>Section 01 / Learning</p>
+              <h2>学习主线</h2>
+            </div>
+            <time datetime="2024-09">2024.09 — 至今</time>
+          </header>
+          <p class="campus-record__lead">
+            从前后端基础出发，持续理解页面、接口、数据与交付之间的完整关系；再把这些知识放进个人项目和真实产品问题中检验。
+          </p>
+          <div class="campus-record__focus-grid">
+            <article>
+              <span>01</span>
+              <h3>前端与交互</h3>
+              <p>关注页面状态、响应式布局、移动端适配和完整交互验证。</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>后端与数据</h3>
+              <p>理解接口、业务流程、数据关系以及前后端之间的协作边界。</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>AI 产品实践</h3>
+              <p>把 AI 能力接入、问题排查和产品交付放进同一条实践链路。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="campus-record__section reveal" id="learning-practice">
+          <header class="campus-record__section-heading">
+            <div>
+              <p>Section 02 / Practice</p>
+              <h2>实践入口</h2>
+            </div>
+            <span>Selected Works</span>
+          </header>
+          <p class="campus-record__lead">
+            学习过程最终落在可以持续维护的真实项目里；这里直接复用项目集合，不另写一份重复介绍。
+          </p>
+          <div class="campus-record__projects">
+            {
+              learningProjects.map((project) => (
+                <a href={`/projects/${project.id}/`}>
+                  <div>
+                    <p>{project.data.typeLabel}</p>
+                    <h3>{project.data.title}</h3>
+                    <span>{project.data.description}</span>
+                  </div>
+                  <TagList
+                    items={project.data.stack.slice(0, 3)}
+                    label={`${project.data.title}技术栈`}
+                  />
+                  <strong aria-hidden="true">查看项目 →</strong>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="campus-record__section reveal" id="current-focus">
+          <header class="campus-record__section-heading">
+            <div>
+              <p>Section 03 / Current</p>
+              <h2>当前关注</h2>
+            </div>
+            <span>In Progress</span>
+          </header>
+          <p class="campus-record__lead">
+            当前继续沿 AI 应用开发、Agent 与 AI 全栈方向学习，把多轮对话、长期记忆、SSE、RAG 和 Tool
+            Calling 逐步放进可验证的产品实践。
+          </p>
+          <div class="campus-record__topics" aria-label="当前学习主题">
+            <span>AI Application</span>
+            <span>Agent</span>
+            <span>RAG</span>
+            <span>Long-term Memory</span>
+            <span>Tool Calling</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
