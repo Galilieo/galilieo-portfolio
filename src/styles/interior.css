@@ -346,6 +346,16 @@ body:has(.interior-page) {
   margin-top: 24px;
 }
 
+.blog-tag-results {
+  min-width: 0;
+  scroll-margin-top: 96px;
+}
+
+.blog-category-groups[hidden],
+.blog-tag-results[hidden] {
+  display: none;
+}
+
 .project-matrix-card,
 .article-matrix-card,
 .archive-chain__card,

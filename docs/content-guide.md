@@ -59,6 +59,19 @@ order: 4
 
 Heart Island 当前通过 `FeaturedProjects.astro` 的第一张项目轮播卡承担重点视觉，不再拥有独立 Hero 卡。要保持它默认显示，应确保 `heart-island` 的 `order` 最小；修改相关视觉时必须保留 `IslandArtwork.astro` 的主体与水纹识别，不能只改 frontmatter 或替换 SVG。
 
+## 使用本地 Galilieo Studio
+
+个人电脑可以运行 `pnpm run studio`；Windows Git Bash 的 pnpm shim 不可用时运行 `node scripts/blog-studio.mjs`。启动器会优先复用当前仓库已有的 Astro 开发预览，并从默认端口开始选择可用的本机端口；实际 Studio 与预览地址以终端输出为准。服务只监听 loopback，直接读写 `src/content/blog/*.md`，不会进入 `dist/`，服务器和线上访客都没有编辑入口。
+
+- 左侧文章库用于搜索并区分草稿、已发布文章；桌面可以折叠，移动端作为临时抽屉打开。
+- 主区提供“专注写作”和“边写边看”两种方式：前者扩大 Markdown 编辑区，后者并排显示真实 Astro 文章页，并可切换桌面/手机画布。
+- Category、Tags、摘要、封面和日期集中在“文章设置”抽屉；编辑区只显示紧凑摘要，不让设置常驻挤压正文。
+- `order` 由新建流程自动分配，`homepageState` 跟随草稿/发布状态，阅读时间根据正文估算；这些派生字段只显示结果，不要求日常手填。
+- 输入过程中会把恢复副本保存在浏览器本地存储；只有点击保存或刷新真实预览时才写入 Markdown。恢复副本不是第二套内容源，成功保存后会清除。
+- “检查并发布”只做一次内容检查并更新 Markdown 发布状态；不会自动 Commit、Push、SSH、rsync 或部署。
+- Studio 只管理普通 `.md`；需要 Astro 组件的 `.mdx` 继续在代码编辑器中维护，避免写作工具破坏组件语法。
+- 封面由 Studio 写入 `src/assets/images/blog/<slug>/cover.webp`；它只做方向修正与等比压缩，不代替人工检查构图。
+
 ## 新增博客文章
 
 在 `src/content/blog/` 新建 `.md`；只有确实需要导入 Astro 组件时才使用 `.mdx`。草稿最小示例：
@@ -90,7 +103,7 @@ homepageState: 已发布
 
 - `category` 是文章的唯一主分类，用于 `/blog/` 与 `/notes/` 的目录分组。优先复用已有分类，避免为单篇文章创建含义相近的新分类。
 - 博客目录在宽桌面使用左侧吸顶面板，1024px 及以下转为内容上方的横向索引；Category 链接定位真实分组。
-- `tags` 是辅助主题词，公开文章保留 2–3 个主要 Tag；博客目录的 Tags 面板提供渐进增强筛选，切回 Category 时恢复全部文章。无 JavaScript 时所有文章仍完整输出。
+- `tags` 是辅助主题词，公开文章保留 2–3 个主要 Tag；博客目录切到 Tags 时，右侧改为按发布日期排序的统一 Tag 结果流，标题显示选中的 Tag 与总数，文章卡内部继续显示真实 Category。切回 Category 时恢复分类分组。无 JavaScript 时只输出 Category 主内容流，所有文章仍完整可访问。
 - 正文使用连续、清晰的 H2/H3 层级生成文章目录，不跳级，也不使用标题只做视觉加粗。
 
 公开文章会进入 `/notes/`、`/blog/`、文章详情、首页 Selected Writing 轮播、归档页“博客笔记”时间线、RSS 和 sitemap。归档页使用原生 Tabs 在博客笔记与个人轨迹之间切换；无 JavaScript 时两套时间线都完整显示。草稿不会生成公开详情页，也不会进入首页、归档、RSS 或 sitemap。

@@ -7,7 +7,10 @@ import {
 } from '../../lib/blog-directory';
 
 export async function getStaticPaths() {
-  const publicArticles = (await getCollection('blog')).filter((article) => !article.data.draft);
+  const allArticles = await getCollection('blog');
+  const publicArticles = import.meta.env.DEV
+    ? allArticles
+    : allArticles.filter((article) => !article.data.draft);
   const navigationArticles = [...publicArticles].sort((a, b) => a.data.order - b.data.order);
   const categorySummaries = getBlogCategorySummaries(publicArticles);
 

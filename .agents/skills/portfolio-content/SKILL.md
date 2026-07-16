@@ -35,6 +35,7 @@ version: 1.0.0
 1. **确认修改入口。**
    - 全局站点、作者、导航和外链优先修改 `src/config/site.ts`。
    - 项目和博客优先修改 `src/content/projects/` 或 `src/content/blog/`。
+   - 个人电脑写普通 Markdown 博客时可运行 `pnpm run studio`（或 `node scripts/blog-studio.mjs`）；它只是本地表单与真实预览，最终内容所有权仍在 `src/content/blog/`。
    - 只有确实属于首页固定叙述时才修改 `src/components/home/`。
 2. **读取 schema。** 核对必填字段、日期格式、URL、布尔值、正整数和 `draft` 约束。
 3. **参考相邻内容。** 沿用现有 frontmatter 排列、语气和 Markdown 结构，不复制无关内容。
@@ -81,6 +82,7 @@ node scripts/verify.mjs
 - `featured: true` 只控制首页 Quick Cards 的“项目精选”，不会替换 Hero 心屿主视觉。
 - `cover` 字段存在不等于当前组件已经显示封面。
 - 草稿不会生成公开详情/RSS，也不会进入首页 Latest Blog 或 Archive Preview。
+- Galilieo Studio 只绑定 `127.0.0.1`，不进入 `dist/`，也不会自动 Commit、Push 或部署；不要把它描述为线上 CMS。
 - 内容目录叫 `blog`，公开路由同时保留 `/blog/` 与 `/notes/` 入口。
 - 只改 `siteConfig` 不一定会同步首页所有固定文案；首页资料还要检查 `src/data/home.ts`。
 

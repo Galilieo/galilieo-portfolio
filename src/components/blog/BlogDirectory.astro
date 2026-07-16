@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { createBlogCategoryGroups, getBlogTagSummaries } from '../../lib/blog-directory';
+import { createBlogCategoryGroups, getBlogTagSummaries, sortBlogArticles } from '../../lib/blog-directory';
 import ArticleCard from './ArticleCard.astro';
 import BlogDirectoryNavigation from './BlogDirectoryNavigation.astro';
 
@@ -12,6 +12,7 @@ const { articles } = Astro.props;
 const groups = createBlogCategoryGroups(articles);
 const categories = groups.map(({ name, id, count }) => ({ name, id, count }));
 const tags = getBlogTagSummaries(articles);
+const sortedForTags = sortBlogArticles(articles);
 ---
 
 <section
@@ -27,7 +28,7 @@ const tags = getBlogTagSummaries(articles);
     )
   }
 
-  <div class="blog-category-groups">
+  <div class="blog-category-groups" data-blog-category-groups>
     {
       groups.map((group) => (
         <section
@@ -54,4 +55,26 @@ const tags = getBlogTagSummaries(articles);
       ))
     }
   </div>
+
+  <section
+    class="blog-category-section blog-tag-results"
+    data-blog-tag-results
+    aria-labelledby="blog-tag-results-title"
+    hidden
+  >
+    <header class="blog-category-section__heading blog-tag-results__heading" data-blog-tag-results-heading>
+      <div>
+        <p>TAG INDEX</p>
+        <h2 id="blog-tag-results-title">全部文章</h2>
+      </div>
+      <span data-blog-tag-results-count>
+        {String(articles.length).padStart(2, '0')} articles
+      </span>
+    </header>
+    <div class="article-grid" data-blog-tag-results-grid>
+      {sortedForTags.map((article, index) => (
+        <ArticleCard article={article} headingLevel={3} artworkIndex={index} />
+      ))}
+    </div>
+  </section>
 </section>

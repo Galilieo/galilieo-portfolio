@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Galilieo Studio — 沉浸写作台</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      color-scheme: light;
+      --bg: #eceff2;
+      --sidebar: #f5f4f1;
+      --paper: #fffefa;
+      --ink: #20242d;
+      --muted: #747982;
+      --line: rgba(54, 61, 73, .13);
+      --line-strong: rgba(54, 61, 73, .23);
+      --accent: #4e64a8;
+      --accent-soft: #e9edfa;
+      --success: #2f7b65;
+      --warm: #9b713d;
+      --shadow: 0 20px 70px rgba(44, 52, 66, .10);
+      --sans: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      --mono: "SFMono-Regular", Consolas, monospace;
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0b1321;
+      --sidebar: #111b2b;
+      --paper: #111c2e;
+      --ink: #eef3fb;
+      --muted: #95a1b5;
+      --line: rgba(180, 197, 224, .13);
+      --line-strong: rgba(180, 197, 224, .25);
+      --accent: #94a8ff;
+      --accent-soft: rgba(126, 150, 255, .13);
+      --success: #73c1a7;
+      --warm: #d5a76d;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .26);
+    }
+    html, body { margin: 0; min-width: 320px; min-height: 100%; }
+    body { overflow: hidden; color: var(--ink); background: var(--bg); font-family: var(--sans); }
+    button, input, textarea { color: inherit; font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, [contenteditable]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    [hidden] { display: none !important; }
+
+    .app { height: 100dvh; display: grid; grid-template-columns: 268px minmax(0, 1fr); transition: grid-template-columns .22s ease; }
+    body.sidebar-collapsed .app { grid-template-columns: 0 minmax(0, 1fr); }
+    .sidebar { min-width: 0; overflow: hidden; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: var(--sidebar); transition: opacity .18s ease; }
+    body.sidebar-collapsed .sidebar { opacity: 0; pointer-events: none; }
+    .brand { height: 66px; display: flex; align-items: center; gap: 11px; padding: 0 18px; border-bottom: 1px solid var(--line); }
+    .brand-mark { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 10px; color: white; background: linear-gradient(145deg, #7085c8, #3f527f); font-weight: 700; box-shadow: 0 8px 24px rgba(65, 83, 135, .22); }
+    .brand-copy { min-width: 0; flex: 1; }
+    .brand-copy strong { display: block; font-size: 13px; letter-spacing: -.01em; }
+    .brand-copy small { color: var(--muted); font: 9px/1.4 var(--mono); }
+    .local-badge { padding: 4px 7px; border-radius: 999px; color: var(--accent); background: var(--accent-soft); font-size: 9px; font-weight: 700; }
+    .side-actions { padding: 14px; }
+    .new-btn { width: 100%; height: 40px; border: 0; border-radius: 10px; color: white; background: var(--accent); font-size: 12px; font-weight: 650; box-shadow: 0 9px 26px color-mix(in srgb, var(--accent) 20%, transparent); }
+    .search { width: calc(100% - 28px); height: 36px; margin: 0 14px 10px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); font-size: 11px; }
+    .library-label { display: flex; align-items: center; justify-content: space-between; padding: 8px 17px; color: var(--muted); font: 700 9px/1 var(--mono); letter-spacing: .12em; }
+    .library-label span:last-child { letter-spacing: 0; font-weight: 500; }
+    .article-list { min-height: 0; flex: 1; overflow: auto; padding: 4px 8px 16px; }
+    .article { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 11px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; text-align: left; }
+    .article:hover { background: color-mix(in srgb, var(--paper) 68%, transparent); }
+    .article.active { border-color: var(--line-strong); background: var(--accent-soft); }
+    .article-copy { min-width: 0; }
+    .article-copy strong, .article-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .article-copy strong { font-size: 11px; font-weight: 600; }
+    .article-copy small { margin-top: 4px; color: var(--muted); font: 9px/1.2 var(--mono); }
+    .status-dot { width: 7px; height: 7px; margin-top: 4px; border-radius: 50%; background: var(--warm); }
+    .status-dot.live { background: var(--success); }
+    .sidebar-foot { height: 39px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 9px; }
+
+    .workspace { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+    .topbar { height: 66px; flex: 0 0 auto; display: flex; align-items: center; gap: 10px; padding: 0 18px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 82%, transparent); backdrop-filter: blur(18px); }
+    .icon-btn, .secondary-btn, .primary-btn { min-height: 36px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--paper); }
+    .icon-btn { width: 36px; padding: 0; }
+    .crumb { min-width: 0; flex: 1; padding-left: 4px; }
+    .crumb strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .crumb small { color: var(--muted); font-size: 10px; }
+    .save-state { display: flex; align-items: center; gap: 6px; margin-right: 4px; color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .save-state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+    .save-state.dirty::before { background: var(--warm); }
+    .secondary-btn, .primary-btn { padding: 0 13px; font-size: 11px; font-weight: 650; }
+    .secondary-btn:hover { border-color: var(--accent); }
+    .primary-btn { border-color: var(--accent); color: white; background: var(--accent); }
+    .mode-switch { display: flex; gap: 3px; padding: 3px; border-radius: 10px; background: var(--accent-soft); }
+    .mode-switch button { height: 29px; padding: 0 10px; border: 0; border-radius: 7px; color: var(--muted); background: transparent; font-size: 10px; }
+    .mode-switch button.active { color: var(--ink); background: var(--paper); box-shadow: 0 2px 8px rgba(20, 30, 50, .08); }
+
+    .canvas { min-height: 0; flex: 1; overflow: auto; background: radial-gradient(circle at 50% 0, color-mix(in srgb, var(--accent) 8%, transparent), transparent 35%); }
+    .document { width: min(780px, calc(100% - 64px)); min-height: calc(100vh - 128px); margin: 38px auto 90px; padding: clamp(42px, 5vw, 72px); border: 1px solid var(--line); border-radius: 15px; background: var(--paper); box-shadow: var(--shadow); }
+    .doc-kicker { margin: 0 0 14px; color: var(--accent); font: 650 10px/1.2 var(--mono); letter-spacing: .11em; }
+    .title-input { width: 100%; min-height: 2.35em; padding: 0; overflow: hidden; border: 0; color: var(--ink); background: transparent; font-size: clamp(30px, 4vw, 45px); font-weight: 680; line-height: 1.16; letter-spacing: -.045em; resize: none; }
+    .title-input:focus { outline: 0; }
+    .description { width: 100%; margin: 18px 0 14px; padding: 0; border: 0; color: var(--muted); background: transparent; font-size: 15px; line-height: 1.75; resize: none; }
+    .doc-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-bottom: 25px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+    .doc-meta span { padding: 5px 8px; border-radius: 999px; background: var(--accent-soft); }
+    .toolbar { position: sticky; top: 12px; z-index: 4; width: max-content; max-width: 100%; display: flex; flex-wrap: wrap; gap: 3px; margin: 22px 0 30px; padding: 5px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--paper) 90%, transparent); box-shadow: 0 9px 30px rgba(35, 45, 64, .08); backdrop-filter: blur(12px); }
+    .toolbar button { min-width: 31px; height: 29px; border: 0; border-radius: 6px; color: var(--muted); background: transparent; font: 600 10px/1 var(--mono); }
+    .toolbar button:hover { color: var(--accent); background: var(--accent-soft); }
+    .body-editor { min-height: 470px; font-size: 15px; line-height: 1.9; }
+    .body-editor:focus { outline: 0; }
+    .body-editor h2 { margin: 2.1em 0 .75em; font-size: 23px; line-height: 1.35; letter-spacing: -.025em; }
+    .body-editor p { margin: 0 0 1.15em; }
+    .body-editor ul { padding-left: 1.25em; }
+    .body-editor code { padding: 2px 5px; border-radius: 5px; background: var(--accent-soft); font-family: var(--mono); font-size: .9em; }
+
+    .preview-document { width: min(1020px, calc(100% - 64px)); margin: 34px auto 90px; overflow: hidden; border: 1px solid var(--line); border-radius: 17px; background: var(--paper); box-shadow: var(--shadow); }
+    .preview-hero { min-height: 250px; display: flex; align-items: end; padding: 42px; color: white; background: linear-gradient(135deg, rgba(20, 38, 72, .15), rgba(20, 38, 72, .72)), linear-gradient(130deg, #8398b5, #32455f 66%, #18283c); }
+    .preview-hero h1 { max-width: 760px; margin: 0; font-size: clamp(31px, 5vw, 54px); line-height: 1.12; letter-spacing: -.045em; }
+    .preview-layout { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 48px; padding: 48px; }
+    .preview-copy { font-size: 15px; line-height: 1.9; }
+    .preview-copy h2 { margin-top: 2em; }
+    .toc { align-self: start; position: sticky; top: 24px; padding-left: 18px; border-left: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 2; }
+
+    .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(7, 12, 22, .42); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .scrim.open { opacity: 1; pointer-events: auto; }
+    .drawer { position: fixed; inset: 0 0 0 auto; z-index: 50; width: min(380px, 100vw); display: flex; flex-direction: column; border-left: 1px solid var(--line); background: var(--paper); box-shadow: -20px 0 70px rgba(20, 28, 42, .18); transform: translateX(102%); transition: transform .24s ease; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { height: 66px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--line); }
+    .drawer-head h2 { margin: 0; font-size: 15px; }
+    .drawer-body { min-height: 0; overflow: auto; padding: 20px; }
+    .field { margin-bottom: 18px; }
+    .field label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 10px; font-weight: 650; }
+    .field input, .field textarea { width: 100%; min-height: 39px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); font-size: 12px; }
+    .field textarea { min-height: 82px; resize: vertical; }
+    .advanced { margin-top: 18px; padding-top: 17px; border-top: 1px solid var(--line); }
+    .advanced summary { color: var(--muted); cursor: pointer; font-size: 11px; font-weight: 650; }
+    .cover-box { min-height: 112px; display: grid; place-items: center; border: 1px dashed var(--line-strong); border-radius: 10px; color: var(--muted); background: var(--accent-soft); font-size: 11px; }
+
+    .modal { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 20px; background: rgba(7, 12, 22, .58); backdrop-filter: blur(7px); }
+    .modal-card { width: min(520px, 100%); overflow: hidden; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--paper); box-shadow: var(--shadow); }
+    .modal-head { padding: 22px 24px 17px; border-bottom: 1px solid var(--line); }
+    .modal-head small { color: var(--accent); font: 650 9px/1 var(--mono); letter-spacing: .12em; }
+    .modal-head h2 { margin: 7px 0 0; font-size: 21px; }
+    .checks { display: grid; gap: 10px; padding: 20px 24px; }
+    .check { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .check:last-child { border-bottom: 0; }
+    .check-mark { width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; color: white; background: var(--success); font-size: 11px; }
+    .check span:last-child { color: var(--muted); font-size: 10px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 15px 24px; border-top: 1px solid var(--line); background: var(--bg); }
+    .toast { position: fixed; left: 50%; bottom: 24px; z-index: 90; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink); background: var(--paper); box-shadow: var(--shadow); transform: translate(-50%, 18px); opacity: 0; pointer-events: none; font-size: 11px; transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 0 minmax(0, 1fr); }
+      .sidebar { opacity: 0; pointer-events: none; }
+      body:not(.sidebar-collapsed) .app { grid-template-columns: min(280px, 82vw) minmax(0, 1fr); }
+      body:not(.sidebar-collapsed) .sidebar { opacity: 1; pointer-events: auto; }
+      .save-state, .mode-switch { display: none; }
+      .document { width: min(100% - 24px, 780px); margin-top: 12px; padding: 28px 22px; }
+      .preview-document { width: calc(100% - 24px); }
+      .preview-layout { grid-template-columns: 1fr; padding: 26px; }
+      .toc { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">G</div>
+        <div class="brand-copy"><strong>Galilieo Studio</strong><small>WRITING DESK</small></div>
+        <span class="local-badge">本机</span>
+      </div>
+      <div class="side-actions"><button class="new-btn" id="newPost">＋ 写一篇新文章</button></div>
+      <input class="search" placeholder="搜索文章…" aria-label="搜索文章" />
+      <div class="library-label"><span>最近文章</span><span>15 篇</span></div>
+      <div class="article-list">
+        <button class="article active"><span class="article-copy"><strong>一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</strong><small>刚刚编辑 · 前端与移动端</small></span><span class="status-dot"></span></button>
+        <button class="article"><span class="article-copy"><strong>心屿为什么需要多轮对话和轻量长期记忆</strong><small>7 月 10 日 · 项目日志</small></span><span class="status-dot live"></span></button>
+        <button class="article"><span class="article-copy"><strong>3000 条聊天记录下，怎样保持历史消息加载后的阅读位置</strong><small>7 月 8 日 · 工程笔记</small></span><span class="status-dot live"></span></button>
+        <button class="article"><span class="article-copy"><strong>修复 Bug 之后，怎样真正吃透相关代码</strong><small>7 月 7 日 · 草稿</small></span><span class="status-dot"></span></button>
+        <button class="article"><span class="article-copy"><strong>从普通 CRUD 到 AI 应用：心屿下一阶段准备做什么</strong><small>7 月 6 日 · 草稿</small></span><span class="status-dot"></span></button>
+      </div>
+      <div class="sidebar-foot"><span>草稿 7</span><span>已发布 8</span></div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <button class="icon-btn" id="toggleSidebar" aria-label="折叠文章库">☰</button>
+        <div class="crumb"><strong>一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</strong><small>草稿 · capacitor-android-media-save-debugging</small></div>
+        <div class="save-state" id="saveState">已保存恢复副本</div>
+        <div class="mode-switch" aria-label="编辑模式"><button class="active" data-mode="write">写作</button><button data-mode="preview">预览</button></div>
+        <button class="icon-btn" id="themeButton" aria-label="切换主题">◐</button>
+        <button class="secondary-btn" id="settingsButton">文章设置</button>
+        <button class="primary-btn" id="publishButton">准备发布</button>
+      </header>
+
+      <section class="canvas">
+        <article class="document" id="writeView">
+          <p class="doc-kicker">DRAFT · 前端与移动端</p>
+          <textarea class="title-input" rows="2" aria-label="文章标题">一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</textarea>
+          <textarea class="description" rows="2" aria-label="文章摘要">从正常与失败保存路径的第一次分叉出发，复盘一次跨越 Vue、Capacitor、Android MediaStore 和 Git 历史的媒体保存问题。</textarea>
+          <div class="doc-meta"><span>Vue 3</span><span>Capacitor</span><span>Android</span><b>约 8 分钟阅读</b></div>
+          <div class="toolbar" aria-label="Markdown 工具栏">
+            <button title="粗体">B</button><button title="斜体"><i>I</i></button><button>H2</button><button>H3</button><button>&lt;/&gt;</button><button>❝</button><button>•</button><button>↗</button><button>图片</button>
+          </div>
+          <div class="body-editor" id="bodyEditor" contenteditable="true" spellcheck="true">
+            <p>这次 Bug 最后只改了两处调用。</p>
+            <p>难的不是怎么改，而是先确认为什么只应该改这两处。问题同时经过 Vue 页面、JavaScript 工具函数、Capacitor 插件和 Android 原生代码，中间还夹着一段已经被遗忘的 Git 历史。</p>
+            <h2>三个看起来矛盾的现象</h2>
+            <p>Android 端最初有四个表现：</p>
+            <ul><li>在角色相册中长按图片或视频，点击 Save 后保存失败；</li><li>同一个长按菜单中的 Delete 可以正常执行；</li><li>点击媒体进入预览页后，再点击 Save，却可以正常保存。</li></ul>
+            <h2>正常路径就是现成的对照组</h2>
+            <p>我从用户实际点击的 Save 往下追，得到三条路径。所有失败入口都经过 <code>savePicture</code>，正常入口则经过 <code>saveImageToGallery</code>。</p>
+          </div>
+        </article>
+
+        <article class="preview-document" id="previewView" hidden>
+          <div class="preview-hero"><div><p class="doc-kicker">前端与移动端 · 2026.07.16</p><h1>一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</h1></div></div>
+          <div class="preview-layout">
+            <div class="preview-copy"><p>这次 Bug 最后只改了两处调用。</p><p>难的不是怎么改，而是先确认为什么只应该改这两处。问题同时经过 Vue 页面、JavaScript 工具函数、Capacitor 插件和 Android 原生代码。</p><h2>三个看起来矛盾的现象</h2><p>Android 端最初有四个表现。正常与失败路径的第一次分叉，成为这次排查中最重要的证据。</p><h2>正常路径就是现成的对照组</h2><p>所有失败入口都经过旧保存链路，正常入口则经过已经完成平台适配的新链路。</p></div>
+            <aside class="toc"><strong>本文目录</strong><br />三个看起来矛盾的现象<br />正常路径就是现成的对照组<br />Git 历史补上证据<br />最终验证</aside>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="settingsDrawer" aria-label="文章设置">
+    <div class="drawer-head"><h2>文章设置</h2><button class="icon-btn" id="closeSettings">×</button></div>
+    <div class="drawer-body">
+      <div class="field"><label>文章摘要</label><textarea>从正常与失败保存路径的第一次分叉出发，复盘一次跨越 Vue、Capacitor、Android MediaStore 和 Git 历史的媒体保存问题。</textarea></div>
+      <div class="field"><label>主分类</label><input value="前端与移动端" /></div>
+      <div class="field"><label>标签</label><input value="Vue 3, Capacitor, Android" /></div>
+      <div class="field"><label>封面</label><div class="cover-box">拖入图片或点击选择<br />自动压缩为 WebP</div></div>
+      <div class="field"><label>发布日期</label><input value="2026-07-16" /></div>
+      <details class="advanced"><summary>高级选项</summary><div class="field"><label>Slug</label><input value="capacitor-android-media-save-debugging" readonly /></div><div class="field"><label>阅读时间</label><input value="自动计算：8 分钟" readonly /></div></details>
+    </div>
+  </aside>
+
+  <section class="modal" id="publishModal" hidden>
+    <div class="modal-card">
+      <div class="modal-head"><small>PUBLISH CHECK</small><h2>这篇文章已经准备好了吗？</h2></div>
+      <div class="checks">
+        <div class="check"><span class="check-mark">✓</span><strong>标题和摘要完整</strong><span>已通过</span></div>
+        <div class="check"><span class="check-mark">✓</span><strong>分类和标签已经填写</strong><span>已通过</span></div>
+        <div class="check"><span class="check-mark">✓</span><strong>标题层级和图片路径</strong><span>已通过</span></div>
+        <div class="check"><span class="check-mark">✓</span><strong>网站预览可以正常生成</strong><span>已通过</span></div>
+      </div>
+      <div class="modal-actions"><button class="secondary-btn" id="cancelPublish">继续编辑</button><button class="primary-btn" id="confirmPublish">设为待发布</button></div>
+    </div>
+  </section>
+  <div class="toast" id="toast">已保存</div>
+
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+    const toast = (message) => { const node = $('#toast'); node.textContent = message; node.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => node.classList.remove('show'), 2200); };
+    const closeDrawer = () => { $('#settingsDrawer').classList.remove('open'); $('#scrim').classList.remove('open'); };
+    $('#settingsButton').onclick = () => { $('#settingsDrawer').classList.add('open'); $('#scrim').classList.add('open'); };
+    $('#closeSettings').onclick = closeDrawer;
+    $('#scrim').onclick = closeDrawer;
+    $('#toggleSidebar').onclick = () => document.body.classList.toggle('sidebar-collapsed');
+    $('#themeButton').onclick = () => document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    $$('.mode-switch button').forEach((button) => button.onclick = () => {
+      $$('.mode-switch button').forEach((item) => item.classList.toggle('active', item === button));
+      const preview = button.dataset.mode === 'preview';
+      $('#writeView').hidden = preview;
+      $('#previewView').hidden = !preview;
+    });
+    $('#publishButton').onclick = () => $('#publishModal').hidden = false;
+    $('#cancelPublish').onclick = () => $('#publishModal').hidden = true;
+    $('#confirmPublish').onclick = () => { $('#publishModal').hidden = true; $('#publishButton').textContent = '已准备发布'; $('#publishButton').style.background = 'var(--success)'; toast('已更新为待发布，部署前仍会运行完整验证'); };
+    $('#newPost').onclick = () => toast('新文章会先选择模板，再进入空白写作页');
+    $$('.article').forEach((item) => item.onclick = () => { $$('.article').forEach((row) => row.classList.remove('active')); item.classList.add('active'); toast('原型：已切换文章'); });
+    ['.title-input', '.description', '#bodyEditor'].forEach((selector) => $(selector).addEventListener('input', () => { const state = $('#saveState'); state.textContent = '正在保存恢复副本…'; state.classList.add('dirty'); clearTimeout(window.saveTimer); window.saveTimer = setTimeout(() => { state.textContent = '已保存恢复副本'; state.classList.remove('dirty'); }, 800); }));
+  </script>
+</body>
+</html>

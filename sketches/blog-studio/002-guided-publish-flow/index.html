@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Galilieo Studio — 引导式发布台</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      color-scheme: dark;
+      --bg: #0b1320;
+      --surface: #111c2c;
+      --surface-2: #152338;
+      --field: #0d1726;
+      --ink: #f1f5fb;
+      --muted: #93a1b7;
+      --line: rgba(173, 193, 224, .15);
+      --line-strong: rgba(173, 193, 224, .28);
+      --accent: #8097f4;
+      --accent-soft: rgba(128, 151, 244, .13);
+      --success: #61b99b;
+      --warning: #d6a35f;
+      --sans: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      --mono: "SFMono-Regular", Consolas, monospace;
+    }
+    html, body { margin: 0; min-width: 320px; min-height: 100%; }
+    body { height: 100dvh; overflow: hidden; color: var(--ink); background: radial-gradient(circle at 75% -20%, rgba(85, 112, 190, .20), transparent 36%), var(--bg); font-family: var(--sans); }
+    button, input, textarea { color: inherit; font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, [contenteditable]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    [hidden] { display: none !important; }
+
+    .shell { height: 100%; display: grid; grid-template-columns: 250px minmax(0, 1fr); }
+    .library { min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: rgba(13, 23, 38, .88); backdrop-filter: blur(20px); }
+    .brand { height: 68px; display: flex; align-items: center; gap: 11px; padding: 0 16px; border-bottom: 1px solid var(--line); }
+    .logo { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--accent); background: var(--accent-soft); font-weight: 750; }
+    .brand div:nth-child(2) { flex: 1; }
+    .brand strong { display: block; font-size: 13px; }
+    .brand small { color: var(--muted); font: 8px/1.4 var(--mono); letter-spacing: .12em; }
+    .new-post { height: 38px; margin: 14px; border: 0; border-radius: 9px; color: #0a1220; background: var(--accent); font-size: 11px; font-weight: 750; }
+    .filter { display: flex; gap: 4px; margin: 0 14px 10px; padding: 3px; border-radius: 8px; background: var(--surface-2); }
+    .filter button { flex: 1; height: 28px; border: 0; border-radius: 6px; color: var(--muted); background: transparent; font-size: 9px; }
+    .filter button.active { color: var(--ink); background: var(--field); }
+    .post-list { min-height: 0; flex: 1; overflow: auto; padding: 4px 8px 16px; }
+    .post-row { width: 100%; display: grid; grid-template-columns: 3px 1fr; gap: 9px; padding: 12px 9px; border: 1px solid transparent; border-radius: 9px; background: transparent; text-align: left; }
+    .post-row:hover { background: var(--surface-2); }
+    .post-row.active { border-color: var(--line-strong); background: var(--accent-soft); }
+    .post-state { border-radius: 99px; background: var(--warning); }
+    .post-state.live { background: var(--success); }
+    .post-copy { min-width: 0; }
+    .post-copy strong, .post-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .post-copy strong { font-size: 11px; font-weight: 600; }
+    .post-copy small { margin-top: 5px; color: var(--muted); font: 9px/1.3 var(--mono); }
+    .library-foot { display: flex; justify-content: space-between; padding: 13px 16px; border-top: 1px solid var(--line); color: var(--muted); font: 9px/1 var(--mono); }
+
+    .main { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+    .header { min-height: 68px; display: flex; align-items: center; gap: 16px; padding: 0 18px; border-bottom: 1px solid var(--line); background: rgba(11, 19, 32, .72); backdrop-filter: blur(18px); }
+    .title { min-width: 0; flex: 1; }
+    .title strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .title small { color: var(--muted); font-size: 9px; }
+    .steps { display: flex; align-items: center; gap: 6px; }
+    .step { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 9px; }
+    .step::after { content: ""; width: 22px; height: 1px; background: var(--line-strong); }
+    .step:last-child::after { display: none; }
+    .step b { width: 21px; height: 21px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; font: 9px/1 var(--mono); }
+    .step.done { color: var(--success); }
+    .step.done b { color: #08150f; border-color: var(--success); background: var(--success); }
+    .step.active { color: var(--ink); }
+    .step.active b { color: #0a1220; border-color: var(--accent); background: var(--accent); }
+    .ghost, .publish { min-height: 36px; padding: 0 13px; border-radius: 9px; font-size: 10px; font-weight: 650; }
+    .ghost { border: 1px solid var(--line-strong); background: var(--surface); }
+    .publish { border: 0; color: #07100d; background: var(--success); }
+
+    .composer { min-height: 0; flex: 1; display: grid; grid-template-columns: minmax(430px, 1fr) minmax(340px, 43%); }
+    .compose-pane { min-width: 0; min-height: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: var(--surface); }
+    .meta-strip { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+    .chip { height: 28px; display: inline-flex; align-items: center; gap: 6px; padding: 0 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--field); font-size: 9px; }
+    .chip b { color: var(--ink); font-weight: 600; }
+    .chip-add { border-style: dashed; color: var(--accent); }
+    .editor-top { padding: 26px 32px 13px; }
+    .editor-top .editor-title { width: 100%; min-height: 1.2em; padding: 0; border: 0; color: var(--ink); background: transparent; font-size: clamp(24px, 2.4vw, 34px); font-weight: 680; line-height: 1.2; letter-spacing: -.035em; }
+    .editor-top .editor-title:focus { outline: 0; }
+    .toolbar { display: flex; gap: 4px; padding: 9px 32px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface-2); }
+    .toolbar button { min-width: 29px; height: 27px; padding: 0 7px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: var(--field); font: 600 9px/1 var(--mono); }
+    .editor-scroll { min-height: 0; flex: 1; overflow: auto; }
+    .editor-body { min-height: 100%; padding: 30px 44px 90px; color: #dce5f3; font: 14px/1.9 var(--mono); }
+    .editor-body:focus { outline: 0; }
+    .editor-body h2 { margin: 2em 0 .7em; color: var(--ink); font: 650 20px/1.4 var(--sans); }
+    .editor-status { height: 37px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-top: 1px solid var(--line); color: var(--muted); font: 9px/1 var(--mono); }
+
+    .preview-pane { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--bg); }
+    .preview-head { height: 51px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid var(--line); color: var(--muted); font: 9px/1 var(--mono); letter-spacing: .08em; }
+    .device-toggle { display: flex; gap: 3px; padding: 3px; border-radius: 7px; background: var(--surface-2); }
+    .device-toggle button { height: 25px; padding: 0 8px; border: 0; border-radius: 5px; color: var(--muted); background: transparent; font-size: 9px; }
+    .device-toggle button.active { color: var(--ink); background: var(--field); }
+    .preview-stage { min-height: 0; flex: 1; overflow: auto; padding: 22px; }
+    .browser { min-height: 100%; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 13px; background: #eef1f5; box-shadow: 0 22px 60px rgba(0, 0, 0, .23); transition: max-width .2s ease; }
+    .browser.mobile { max-width: 310px; margin: 0 auto; border-radius: 24px; box-shadow: 0 24px 70px rgba(0, 0, 0, .34), 0 0 0 5px rgba(173, 193, 224, .11); }
+    .browser-bar { height: 31px; display: flex; align-items: center; gap: 5px; padding: 0 10px; background: #dfe4eb; }
+    .browser-bar i { width: 7px; height: 7px; border-radius: 50%; background: #aeb8c6; }
+    .site-head { height: 49px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: #263246; background: rgba(255, 255, 255, .86); border-bottom: 1px solid #d9dee6; font-size: 9px; }
+    .site-head strong { font-size: 12px; }
+    .site-article { color: #263246; background: #fbfaf7; }
+    .site-cover { height: 158px; display: flex; align-items: end; padding: 22px; color: white; background: linear-gradient(160deg, rgba(25, 42, 72, .18), rgba(21, 35, 58, .76)), linear-gradient(130deg, #91a8c0, #435d7a); }
+    .site-cover small { font-size: 8px; letter-spacing: .12em; }
+    .site-cover h1 { margin: 7px 0 0; font-size: clamp(18px, 2vw, 27px); line-height: 1.17; letter-spacing: -.035em; }
+    .site-copy { padding: 24px; font-family: Georgia, "Noto Serif SC", serif; font-size: 11px; line-height: 1.9; }
+    .site-copy h2 { margin-top: 1.8em; font-family: var(--sans); font-size: 16px; }
+
+    .publish-panel { position: fixed; inset: 0 0 0 auto; z-index: 30; width: min(420px, 100vw); display: flex; flex-direction: column; border-left: 1px solid var(--line-strong); background: var(--surface); box-shadow: -30px 0 80px rgba(0, 0, 0, .3); transform: translateX(102%); transition: transform .22s ease; }
+    .publish-panel.open { transform: translateX(0); }
+    .panel-head { padding: 22px; border-bottom: 1px solid var(--line); }
+    .panel-head small { color: var(--success); font: 600 9px/1 var(--mono); letter-spacing: .12em; }
+    .panel-head h2 { margin: 8px 0 5px; font-size: 22px; }
+    .panel-head p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .panel-body { min-height: 0; flex: 1; overflow: auto; padding: 18px 22px; }
+    .result { display: grid; grid-template-columns: 25px 1fr auto; gap: 10px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 11px; }
+    .result-icon { width: 23px; height: 23px; display: grid; place-items: center; border-radius: 7px; color: #07130f; background: var(--success); }
+    .result small { color: var(--muted); }
+    .publish-summary { margin-top: 20px; padding: 15px; border: 1px solid var(--line); border-radius: 10px; background: var(--field); }
+    .publish-summary label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 9px; }
+    .publish-summary p { margin: 0; font-size: 11px; line-height: 1.6; }
+    .panel-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; padding: 16px 22px; border-top: 1px solid var(--line); }
+    .scrim { position: fixed; inset: 0; z-index: 20; background: rgba(3, 8, 15, .55); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .scrim.open { opacity: 1; pointer-events: auto; }
+    .toast { position: fixed; left: 50%; bottom: 22px; z-index: 50; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink); background: var(--surface-2); transform: translate(-50%, 16px); opacity: 0; font-size: 10px; transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 1020px) { .steps { display: none; } .composer { grid-template-columns: 1fr; } .preview-pane { display: none; } }
+    @media (max-width: 720px) { .shell { grid-template-columns: 1fr; } .library { display: none; } .header { gap: 8px; } .editor-body { padding-inline: 22px; } .ghost { display: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="library">
+      <div class="brand"><div class="logo">G</div><div><strong>Galilieo Studio</strong><small>PUBLISH WORKFLOW</small></div></div>
+      <button class="new-post" id="newPost">＋ 创建博客草稿</button>
+      <div class="filter"><button class="active" data-filter="all">全部</button><button data-filter="draft">草稿</button><button data-filter="live">已发布</button></div>
+      <div class="post-list">
+        <button class="post-row active" data-state="draft"><span class="post-state"></span><span class="post-copy"><strong>一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</strong><small>草稿 · 刚刚编辑</small></span></button>
+        <button class="post-row" data-state="live"><span class="post-state live"></span><span class="post-copy"><strong>心屿为什么需要多轮对话和轻量长期记忆</strong><small>已发布 · 2026.07.10</small></span></button>
+        <button class="post-row" data-state="live"><span class="post-state live"></span><span class="post-copy"><strong>3000 条聊天记录下，怎样保持历史消息加载后的阅读位置</strong><small>已发布 · 2026.07.08</small></span></button>
+        <button class="post-row" data-state="draft"><span class="post-state"></span><span class="post-copy"><strong>修复 Bug 之后，怎样真正吃透相关代码</strong><small>草稿 · 3 天前</small></span></button>
+        <button class="post-row" data-state="draft"><span class="post-state"></span><span class="post-copy"><strong>从普通 CRUD 到 AI 应用：心屿下一阶段准备做什么</strong><small>草稿 · 4 天前</small></span></button>
+      </div>
+      <div class="library-foot"><span>LOCAL</span><span>15 ARTICLES</span></div>
+    </aside>
+
+    <main class="main">
+      <header class="header">
+        <div class="title"><strong>一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</strong><small>草稿自动保存在本机 · 还未进入生产站</small></div>
+        <div class="steps"><span class="step done"><b>✓</b>内容</span><span class="step active"><b>2</b>预览</span><span class="step"><b>3</b>检查</span><span class="step"><b>4</b>发布</span></div>
+        <button class="ghost" id="focusButton">专注写作</button>
+        <button class="publish" id="openPublish">检查并发布</button>
+      </header>
+
+      <section class="composer">
+        <section class="compose-pane">
+          <div class="meta-strip"><span class="chip">分类 <b>前端与移动端</b></span><span class="chip">标签 <b>Vue 3 · Capacitor · Android</b></span><button class="chip chip-add">＋ 设置封面</button></div>
+          <div class="editor-top"><div class="editor-title" contenteditable="true" role="textbox" aria-multiline="true" aria-label="文章标题">一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</div></div>
+          <div class="toolbar"><button>B</button><button><i>I</i></button><button>H2</button><button>H3</button><button>&lt;/&gt;</button><button>❝</button><button>•</button><button>↗</button><button>图片</button></div>
+          <div class="editor-scroll"><div class="editor-body" id="editorBody" contenteditable="true" spellcheck="true"><p>这次 Bug 最后只改了两处调用。</p><p>难的不是怎么改，而是先确认为什么只应该改这两处。问题同时经过 Vue 页面、JavaScript 工具函数、Capacitor 插件和 Android 原生代码，中间还夹着一段已经被遗忘的 Git 历史。</p><h2>三个看起来矛盾的现象</h2><p>Android 端最初有四个表现：</p><p>- 在角色相册中长按图片或视频，点击 Save 后保存失败；<br />- 同一个长按菜单中的 Delete 可以正常执行；<br />- 点击媒体进入预览页后，再点击 Save，却可以正常保存。</p><h2>正常路径就是现成的对照组</h2><p>我从用户实际点击的 Save 往下追，所有失败入口都经过旧保存链路，正常入口则经过已经完成平台适配的新链路。</p></div></div>
+          <div class="editor-status"><span id="saveState">已保存恢复副本</span><span>1,864 字 · 约 8 分钟</span></div>
+        </section>
+
+        <aside class="preview-pane" id="previewPane">
+          <div class="preview-head"><span>REAL SITE PREVIEW</span><div class="device-toggle"><button class="active" data-device="desktop">桌面</button><button data-device="mobile">手机</button></div></div>
+          <div class="preview-stage"><div class="browser" id="browserPreview"><div class="browser-bar"><i></i><i></i><i></i></div><div class="site-head"><strong>Galilieo Atlas</strong><span>首页　项目　博客　归档　关于</span></div><article class="site-article"><div class="site-cover"><div><small>前端与移动端 · 2026.07.16</small><h1>一个两行修复，为什么从 Vue 一直追到了 Android 原生插件？</h1></div></div><div class="site-copy"><p>这次 Bug 最后只改了两处调用。</p><p>难的不是怎么改，而是先确认为什么只应该改这两处。问题同时经过 Vue 页面、JavaScript 工具函数、Capacitor 插件和 Android 原生代码。</p><h2>三个看起来矛盾的现象</h2><p>Android 端最初有四个表现。正常与失败路径的第一次分叉，成为这次排查中最重要的证据。</p></div></article></div></div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="publish-panel" id="publishPanel">
+    <div class="panel-head"><small>QUALITY GATE</small><h2>发布检查</h2><p>这里不让你再填写技术字段，只确认文章是否真的可以公开。</p></div>
+    <div class="panel-body">
+      <div class="result"><span class="result-icon">✓</span><strong>文章信息完整</strong><small>标题、摘要、日期</small></div>
+      <div class="result"><span class="result-icon">✓</span><strong>分类与标签有效</strong><small>1 个分类 · 4 个标签</small></div>
+      <div class="result"><span class="result-icon">✓</span><strong>正文结构可读</strong><small>4 个章节 · 无跳级</small></div>
+      <div class="result"><span class="result-icon">✓</span><strong>静态页面能够生成</strong><small>网站检查已通过</small></div>
+      <div class="publish-summary"><label>发布后将出现于</label><p>博客目录、首页精选、归档时间线、文章详情、RSS 与 sitemap。</p></div>
+      <div class="publish-summary"><label>部署边界</label><p>本操作只更新本地 Markdown。不会自动 Commit、Push、SSH 或修改服务器。</p></div>
+    </div>
+    <div class="panel-actions"><button class="ghost" id="closePublish">返回修改</button><button class="publish" id="confirmPublish">标记为待发布</button></div>
+  </aside>
+  <div class="toast" id="toast">原型交互</div>
+
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+    const toast = (message) => { const node = $('#toast'); node.textContent = message; node.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => node.classList.remove('show'), 2200); };
+    const closePublish = () => { $('#publishPanel').classList.remove('open'); $('#scrim').classList.remove('open'); };
+    $('#openPublish').onclick = () => { $('#publishPanel').classList.add('open'); $('#scrim').classList.add('open'); };
+    $('#closePublish').onclick = closePublish;
+    $('#scrim').onclick = closePublish;
+    $('#confirmPublish').onclick = () => { closePublish(); $('#openPublish').textContent = '已准备发布'; toast('文章已标记为待发布，下一步运行完整 verify'); };
+    $('#focusButton').onclick = () => { $('#previewPane').style.display = $('#previewPane').style.display === 'none' ? '' : 'none'; document.querySelector('.composer').style.gridTemplateColumns = $('#previewPane').style.display === 'none' ? '1fr' : ''; $('#focusButton').textContent = $('#previewPane').style.display === 'none' ? '打开预览' : '专注写作'; };
+    $$('.device-toggle button').forEach((button) => button.onclick = () => { $$('.device-toggle button').forEach((item) => item.classList.toggle('active', item === button)); $('#browserPreview').classList.toggle('mobile', button.dataset.device === 'mobile'); });
+    $$('.filter button').forEach((button) => button.onclick = () => { $$('.filter button').forEach((item) => item.classList.toggle('active', item === button)); $$('.post-row').forEach((row) => row.hidden = button.dataset.filter !== 'all' && row.dataset.state !== button.dataset.filter); });
+    $$('.post-row').forEach((row) => row.onclick = () => { $$('.post-row').forEach((item) => item.classList.remove('active')); row.classList.add('active'); toast('原型：已切换文章'); });
+    $('#newPost').onclick = () => toast('新文章将从“空白 / 工程排查 / 项目日志”模板开始');
+    $('#editorBody').addEventListener('input', () => { $('#saveState').textContent = '正在保存恢复副本…'; clearTimeout(window.saveTimer); window.saveTimer = setTimeout(() => $('#saveState').textContent = '已保存恢复副本', 800); });
+  </script>
+</body>
+</html>

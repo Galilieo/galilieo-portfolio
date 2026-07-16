@@ -14,7 +14,10 @@
     "check:home": "node scripts/check-home-structure.mjs",
     "sync:music": "node scripts/sync-netease-playlist.mjs 18145116776",
     "verify": "node scripts/verify.mjs",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "studio": "node scripts/blog-studio.mjs",
+    "test:studio": "node --test tests/blog-studio/*.test.mjs",
+    "check:studio": "node scripts/check-studio-isolation.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.2",

@@ -8,6 +8,10 @@ coverage/
 playwright-report/
 test-results/
 *.log
+src/content/blog/.blog-studio-*.tmp
+src/content/blog/.blog-studio-*.bak
+src/assets/images/blog/**/.blog-studio-*.tmp
+src/assets/images/blog/**/.blog-studio-*.bak
 .DS_Store
 Thumbs.db
 .env

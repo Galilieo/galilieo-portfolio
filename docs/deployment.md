@@ -26,6 +26,12 @@ pnpm run preview
 
 构建成功后产物位于 `dist/`。只发布该目录的内容，不上传源码、`node_modules`、`.env` 或本地工具文件。`preview` 默认用于本地抽查，不是生产服务器。
 
+### 本地博客 Studio 不参与部署
+
+`pnpm run studio`（或 `node scripts/blog-studio.mjs`）只供个人电脑写作：Studio 监听 `127.0.0.1`，修改 `src/content/blog/` 并调用本地 Astro 预览。不得把 `tools/blog-studio/`、`scripts/blog-studio.mjs`、Markdown 源文件、开发 Cookie 或本地写 API 上传到服务器。
+
+统一验证包含生产隔离检查；`dist/` 中出现 `/studio`、`/admin`、写接口或 Markdown 源文件时应阻止发布。线上仍只有 Nginx 可读静态文件，访问 `/studio` 或 `/admin` 必须返回 404。
+
 ## 发布到 Nginx
 
 仓库提供 `nginx.conf.example`。部署前在服务器副本中核对 `server_name`、`root`、Nginx 用户和证书路径，不要把密码、Token 或私钥写回仓库。
@@ -99,6 +105,7 @@ curl -I https://galilieo.heart-island.cn/not-a-real-page
 - **安装失败或版本不支持**：核对 Node.js 是否至少 22.12、pnpm 是否为 11.11.0。
 - **build 因内容报错**：按 `src/content.config.ts` 检查必填字段、日期格式、URL、布尔值和 `order`。
 - **文章没有生成**：确认 `draft: false` 且填写 `publishedAt`。
+- **线上能打开 Studio/Admin**：立即停止发布并检查上传源是否误用了仓库根目录；生产只能同步 `dist/`，正常构建不包含本地 Studio。
 - **刷新详情页得到首页**：移除 SPA fallback，使用 `$uri $uri/ =404`。
 - **真实详情页 404**：确认上传时保留 Astro `directory` 构建的目录与其中 `index.html`。
 - **样式或脚本仍是旧版**：检查 CDN/浏览器缓存策略与上传结果；不要只重载 Nginx 来代替更新文件。

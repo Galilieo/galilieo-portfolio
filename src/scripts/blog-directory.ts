@@ -2,7 +2,7 @@ import type { Cleanup } from './theme';
 
 const FILTER_CHANGE_EVENT = 'blog:filter-change';
 
-function readTags(entry: HTMLElement): string[] {
+function tagsFor(entry: HTMLElement): string[] {
   try {
     return JSON.parse(entry.dataset.articleTags ?? '[]') as string[];
   } catch {
@@ -10,64 +10,57 @@ function readTags(entry: HTMLElement): string[] {
   }
 }
 
-/** 增强博客 Category / Tags 双目录；服务端始终输出全部文章。 */
+/** 在完整服务端 Category 内容上增强 Tags 统一结果流。 */
 export function initBlogDirectory(): Cleanup {
   const root = document.querySelector<HTMLElement>('[data-blog-directory]');
   const navigation = root?.querySelector<HTMLElement>('[data-blog-directory-navigation]');
-  if (!root || !navigation) return () => {};
+  const categoryGroups = root?.querySelector<HTMLElement>('[data-blog-category-groups]');
+  const tagResults = root?.querySelector<HTMLElement>('[data-blog-tag-results]');
+  const tagHeading = tagResults?.querySelector<HTMLElement>('[data-blog-tag-results-heading]');
+  const tagGrid = tagResults?.querySelector<HTMLElement>('[data-blog-tag-results-grid]');
+  if (!root || !navigation || !categoryGroups || !tagResults || !tagHeading || !tagGrid) {
+    return () => {};
+  }
 
-  const tabs = Array.from(
-    navigation.querySelectorAll<HTMLButtonElement>('[data-blog-directory-tab]'),
-  );
-  const panels = Array.from(
-    navigation.querySelectorAll<HTMLElement>('[data-blog-directory-panel]'),
-  );
-  const tagButtons = Array.from(
-    navigation.querySelectorAll<HTMLButtonElement>('[data-blog-tag-filter]'),
-  );
-  const sections = Array.from(root.querySelectorAll<HTMLElement>('[data-blog-category-section]'));
+  const tabs = [...navigation.querySelectorAll<HTMLButtonElement>('[data-blog-directory-tab]')];
+  const panels = [...navigation.querySelectorAll<HTMLElement>('[data-blog-directory-panel]')];
+  const tagButtons = [...navigation.querySelectorAll<HTMLButtonElement>('[data-blog-tag-filter]')];
+  const tagEntries = [...tagGrid.querySelectorAll<HTMLElement>('[data-blog-entry]')];
+  const headingLabel = tagHeading.querySelector<HTMLElement>('p');
+  const headingTitle = tagHeading.querySelector<HTMLElement>('h2');
+  const headingCount = tagHeading.querySelector<HTMLElement>('[data-blog-tag-results-count]');
   const status = navigation.querySelector<HTMLElement>('[data-blog-filter-status]');
+  const originalStatus = status?.textContent?.trim() ?? '';
   const controller = new AbortController();
   let selectedTag = '';
 
-  const announce = (visibleCount: number) => {
-    if (!status) return;
-    status.textContent = selectedTag
-      ? `Tag「${selectedTag}」· ${String(visibleCount).padStart(2, '0')} 篇文章`
-      : `共 ${String(visibleCount).padStart(2, '0')} 篇公开文章`;
+  const announce = (tag: string, count: number) => {
+    if (headingLabel) headingLabel.textContent = tag ? 'TAG' : 'TAG INDEX';
+    if (headingTitle) headingTitle.textContent = tag || '全部文章';
+    if (headingCount) headingCount.textContent = `${String(count).padStart(2, '0')} articles`;
+    if (status) {
+      status.textContent = tag
+        ? `Tag · ${tag} · ${String(count).padStart(2, '0')} articles`
+        : `TAG INDEX · 全部文章 · ${String(count).padStart(2, '0')} articles`;
+    }
   };
 
-  const applyTag = (tag: string) => {
+  const showTag = (tag: string) => {
     selectedTag = tag;
-    let totalVisible = 0;
-
-    sections.forEach((section) => {
-      const entries = Array.from(section.querySelectorAll<HTMLElement>('[data-blog-entry]'));
-      let sectionVisible = 0;
-
-      entries.forEach((entry) => {
-        const matches = !selectedTag || readTags(entry).includes(selectedTag);
-        entry.hidden = !matches;
-        if (matches) sectionVisible += 1;
-      });
-
-      section.hidden = sectionVisible === 0;
-      totalVisible += sectionVisible;
-      const count = section.querySelector<HTMLElement>('[data-blog-category-visible-count]');
-      if (count) count.textContent = `${String(sectionVisible).padStart(2, '0')} articles`;
+    let visible = 0;
+    tagEntries.forEach((entry) => {
+      const matches = !tag || tagsFor(entry).includes(tag);
+      entry.hidden = !matches;
+      if (matches) visible += 1;
     });
-
     tagButtons.forEach((button) => {
-      button.setAttribute(
-        'aria-pressed',
-        String((button.dataset.blogTagFilter ?? '') === selectedTag),
-      );
+      button.setAttribute('aria-pressed', String((button.dataset.blogTagFilter ?? '') === tag));
     });
-    announce(totalVisible);
+    announce(tag, visible);
     document.dispatchEvent(new CustomEvent(FILTER_CHANGE_EVENT));
   };
 
-  const setMode = (mode: string, focus = false) => {
+  const setMode = (mode: 'category' | 'tags', focus = false) => {
     tabs.forEach((tab) => {
       const selected = tab.dataset.blogDirectoryTab === mode;
       tab.setAttribute('aria-selected', String(selected));
@@ -77,21 +70,37 @@ export function initBlogDirectory(): Cleanup {
     panels.forEach((panel) => {
       panel.hidden = panel.dataset.blogDirectoryPanel !== mode;
     });
-    if (mode === 'category' && selectedTag) applyTag('');
+
+    const tagsMode = mode === 'tags';
+    root.dataset.blogDirectoryMode = mode;
+    categoryGroups.hidden = tagsMode;
+    tagResults.hidden = !tagsMode;
+    if (tagsMode) showTag('');
+    else {
+      selectedTag = '';
+      tagEntries.forEach((entry) => { entry.hidden = false; });
+      tagButtons.forEach((button) => {
+        button.setAttribute('aria-pressed', String(!(button.dataset.blogTagFilter ?? '')));
+      });
+      if (status) status.textContent = originalStatus;
+      document.dispatchEvent(new CustomEvent(FILTER_CHANGE_EVENT));
+    }
   };
 
   tabs.forEach((tab, index) => {
-    tab.addEventListener('click', () => setMode(tab.dataset.blogDirectoryTab ?? 'category'), {
-      signal: controller.signal,
-    });
+    tab.addEventListener(
+      'click',
+      () => setMode(tab.dataset.blogDirectoryTab === 'tags' ? 'tags' : 'category'),
+      { signal: controller.signal },
+    );
     tab.addEventListener(
       'keydown',
       (event) => {
-        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
         event.preventDefault();
         const offset = event.key === 'ArrowRight' ? 1 : -1;
         const next = tabs[(index + offset + tabs.length) % tabs.length];
-        setMode(next.dataset.blogDirectoryTab ?? 'category', true);
+        setMode(next.dataset.blogDirectoryTab === 'tags' ? 'tags' : 'category', true);
       },
       { signal: controller.signal },
     );
@@ -102,38 +111,30 @@ export function initBlogDirectory(): Cleanup {
       'click',
       () => {
         const tag = button.dataset.blogTagFilter ?? '';
-        applyTag(tag === selectedTag ? '' : tag);
+        showTag(tag === selectedTag ? '' : tag);
       },
       { signal: controller.signal },
     );
   });
 
   setMode('category');
-  applyTag('');
 
   return () => {
     controller.abort();
-    selectedTag = '';
-    sections.forEach((section) => {
-      section.hidden = false;
-      section.querySelectorAll<HTMLElement>('[data-blog-entry]').forEach((entry) => {
-        entry.hidden = false;
-      });
-      const count = section.querySelector<HTMLElement>('[data-blog-category-visible-count]');
-      if (count) {
-        const original = Number(section.dataset.categoryCount ?? 0);
-        count.textContent = `${String(original).padStart(2, '0')} articles`;
-      }
+    delete root.dataset.blogDirectoryMode;
+    categoryGroups.hidden = false;
+    tagResults.hidden = true;
+    tagEntries.forEach((entry) => { entry.hidden = false; });
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.blogDirectoryPanel !== 'category';
     });
     tabs.forEach((tab, index) => {
       tab.setAttribute('aria-selected', String(index === 0));
       tab.tabIndex = index === 0 ? 0 : -1;
     });
     tagButtons.forEach((button) => {
-      button.setAttribute('aria-pressed', String(!button.dataset.blogTagFilter));
+      button.setAttribute('aria-pressed', String(!(button.dataset.blogTagFilter ?? '')));
     });
-    panels.forEach((panel) => {
-      panel.hidden = panel.dataset.blogDirectoryPanel !== 'category';
-    });
+    if (status) status.textContent = originalStatus;
   };
 }

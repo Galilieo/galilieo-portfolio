@@ -1,5 +1,3 @@
-/* global console, process */
-
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 

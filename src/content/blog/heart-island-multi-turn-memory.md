@@ -1,15 +1,16 @@
 ---
 title: '心屿为什么需要多轮对话和轻量长期记忆'
 description: '心屿为什么需要多轮对话和轻量长期记忆'
-publishedAt: 2026-07-10
-category: 项目日志
+publishedAt: '2026-07-10'
+category: '项目日志'
 tags:
-  - AI 应用
-  - 多轮对话
+  - 'AI 应用'
+  - '多轮对话'
 draft: false
 featured: true
+readingTime: 1
 order: 1
-homepageState: 已发布
+homepageState: '已发布'
 ---
 
 ## 项目背景
