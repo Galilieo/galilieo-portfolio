@@ -104,11 +104,15 @@ await runGeneratedSiteContract({
     for (const marker of [
       'data-archive-course',
       'class="archive-chain__chapter"',
+      'class="archive-chain__coordinate"',
       'class="archive-chain__track"',
       'class="archive-chain__beacon"',
       'data-archive-voyage',
       'data-archive-voyage-day',
       'data-archive-voyage-night',
+      'NEXT COORDINATE',
+      '下一程，仍在航行',
+      '把走过的路留在这里，新的坐标仍在海面上亮起。',
     ]) {
       if (!archive.includes(marker)) failures.push(`Archive must render ${marker}.`);
     }
