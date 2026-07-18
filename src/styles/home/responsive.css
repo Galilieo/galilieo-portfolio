@@ -142,8 +142,8 @@
   }
 
   .home-utility__github-body {
-    min-height: 124px;
-    margin: 15px 0 12px;
+    min-height: 110px;
+    margin: 12px 0 10px;
     grid-template-columns: 92px minmax(0, 1fr);
     gap: 12px;
   }
@@ -177,9 +177,9 @@
   }
 
   .home-utility__activity {
-    height: 62px;
-    min-height: 62px;
-    margin-top: 7px;
+    height: 52px;
+    min-height: 52px;
+    margin-top: 6px;
   }
 
   .home-utility__activity.is-loaded {
@@ -187,7 +187,7 @@
   }
 
   .home-utility__activity [data-level='4'] {
-    height: 58px;
+    height: 48px;
   }
 
   .home-utility__github-axis {
@@ -247,7 +247,7 @@
 
   .home-profile__role,
   .home-profile__summary {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .home-profile__count {

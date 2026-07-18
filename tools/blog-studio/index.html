@@ -18,17 +18,30 @@
           <span class="local-badge">本机</span>
         </div>
 
-        <button id="btn-new-article" class="btn btn-primary library-new" type="button">＋ 写一篇新文章</button>
+        <button id="btn-new-article" class="btn btn-primary library-new" type="button">
+          ＋ 写一篇新文章
+        </button>
 
         <div class="library-search">
           <label class="sr-only" for="search-articles">搜索文章</label>
-          <input id="search-articles" type="search" placeholder="搜索标题、摘要或 Slug" autocomplete="off" />
+          <input
+            id="search-articles"
+            type="search"
+            placeholder="搜索标题、摘要或 Slug"
+            autocomplete="off"
+          />
         </div>
 
         <div class="library-filters" aria-label="文章状态筛选">
-          <button class="filter-btn active" type="button" data-filter="all" aria-pressed="true">全部</button>
-          <button class="filter-btn" type="button" data-filter="draft" aria-pressed="false">草稿</button>
-          <button class="filter-btn" type="button" data-filter="published" aria-pressed="false">已发布</button>
+          <button class="filter-btn active" type="button" data-filter="all" aria-pressed="true">
+            全部
+          </button>
+          <button class="filter-btn" type="button" data-filter="draft" aria-pressed="false">
+            草稿
+          </button>
+          <button class="filter-btn" type="button" data-filter="published" aria-pressed="false">
+            已发布
+          </button>
         </div>
 
         <div class="library-heading">
@@ -46,7 +59,14 @@
 
       <section class="workspace">
         <header class="workspace-header">
-          <button id="btn-toggle-library" class="btn btn-icon" type="button" aria-label="展开或折叠文章库">☰</button>
+          <button
+            id="btn-toggle-library"
+            class="btn btn-icon"
+            type="button"
+            aria-label="展开或折叠文章库"
+          >
+            ☰
+          </button>
           <div class="current-article">
             <strong id="current-title">选择一篇文章开始写作</strong>
             <small><span id="current-state">未选择</span><span id="current-slug"></span></small>
@@ -56,7 +76,15 @@
             <button type="button" data-writing-mode="focus">专注写作</button>
             <button class="active" type="button" data-writing-mode="split">边写边看</button>
           </div>
-          <button id="btn-theme" class="btn btn-icon" type="button" title="切换主题" aria-label="切换主题">◐</button>
+          <button
+            id="btn-theme"
+            class="btn btn-icon"
+            type="button"
+            title="切换主题"
+            aria-label="切换主题"
+          >
+            ◐
+          </button>
           <button id="btn-settings" class="btn btn-secondary" type="button">文章设置</button>
           <button id="btn-save" class="btn btn-primary" type="button" title="Ctrl+S">保存</button>
           <button id="btn-publish-check" class="btn btn-accent" type="button">发布检查</button>
@@ -74,9 +102,15 @@
         <div class="workbench" id="editor-shell" hidden>
           <main class="editor-panel" aria-label="Markdown 编辑器">
             <div class="content-summary">
-              <button id="summary-category" class="summary-chip" type="button">分类 <strong>未设置</strong></button>
-              <button id="summary-tags" class="summary-chip" type="button">标签 <strong>未设置</strong></button>
-              <button id="summary-cover" class="summary-chip summary-chip-action" type="button">＋ 设置封面</button>
+              <button id="summary-category" class="summary-chip" type="button">
+                分类 <strong>未设置</strong>
+              </button>
+              <button id="summary-tags" class="summary-chip" type="button">
+                标签 <strong>未设置</strong>
+              </button>
+              <button id="summary-cover" class="summary-chip summary-chip-action" type="button">
+                ＋ 设置封面
+              </button>
               <span class="summary-reading" id="reading-time-display">约 1 分钟阅读</span>
               <span class="read-only-badge" id="read-only-badge" hidden>MDX 只读</span>
             </div>
@@ -86,18 +120,33 @@
                 <strong>找到未写入 Markdown 的恢复副本</strong>
                 <small>可以恢复上次未保存的内容，或忽略它继续使用磁盘版本。</small>
               </div>
-              <button class="btn btn-small btn-secondary" id="btn-dismiss-recovery" type="button">忽略</button>
-              <button class="btn btn-small btn-primary" id="btn-restore-recovery" type="button">恢复</button>
+              <button class="btn btn-small btn-secondary" id="btn-dismiss-recovery" type="button">
+                忽略
+              </button>
+              <button class="btn btn-small btn-primary" id="btn-restore-recovery" type="button">
+                恢复
+              </button>
             </div>
 
             <div class="editor-title-wrap">
               <label class="sr-only" for="editor-title">文章标题</label>
-              <textarea id="editor-title" class="editor-title-input" rows="1" maxlength="200" placeholder="文章标题" data-editable-control></textarea>
+              <textarea
+                id="editor-title"
+                class="editor-title-input"
+                rows="1"
+                maxlength="200"
+                placeholder="文章标题"
+                data-editable-control
+              ></textarea>
             </div>
 
             <div class="editor-tools" aria-label="Markdown 快捷工具">
-              <button class="tool-btn" type="button" data-markdown="bold" title="粗体"><strong>B</strong></button>
-              <button class="tool-btn" type="button" data-markdown="italic" title="斜体"><em>I</em></button>
+              <button class="tool-btn" type="button" data-markdown="bold" title="粗体">
+                <strong>B</strong>
+              </button>
+              <button class="tool-btn" type="button" data-markdown="italic" title="斜体">
+                <em>I</em>
+              </button>
               <button class="tool-btn" type="button" data-markdown="h2">H2</button>
               <button class="tool-btn" type="button" data-markdown="h3">H3</button>
               <button class="tool-btn" type="button" data-markdown="code">&lt;/&gt;</button>
@@ -110,7 +159,13 @@
 
             <div class="editor-body-wrap">
               <label class="sr-only" for="editor-body">Markdown 正文</label>
-              <textarea id="editor-body" class="editor-body" spellcheck="true" placeholder="开始写作…" data-editable-control></textarea>
+              <textarea
+                id="editor-body"
+                class="editor-body"
+                spellcheck="true"
+                placeholder="开始写作…"
+                data-editable-control
+              ></textarea>
             </div>
             <div class="editor-status" id="editor-status">
               <span id="editor-status-text">已保存到 Markdown</span>
@@ -129,15 +184,25 @@
                   <button class="active" type="button" data-preview-device="desktop">桌面</button>
                   <button type="button" data-preview-device="mobile">手机</button>
                 </div>
-                <button id="btn-refresh-preview" class="btn btn-small btn-secondary" type="button">刷新</button>
-                <button id="btn-open-preview" class="btn btn-small btn-secondary" type="button">新窗口</button>
+                <button id="btn-refresh-preview" class="btn btn-small btn-secondary" type="button">
+                  刷新
+                </button>
+                <button id="btn-open-preview" class="btn btn-small btn-secondary" type="button">
+                  新窗口
+                </button>
               </div>
             </div>
-            <div class="preview-stage">
-              <div class="preview-empty" id="preview-empty">保存文章后，这里会显示真实 Astro 页面。</div>
+            <div class="preview-stage" id="preview-stage">
+              <div class="preview-empty" id="preview-empty">
+                保存文章后，这里会显示真实 Astro 页面。
+              </div>
               <div class="preview-shell" id="preview-shell" hidden>
                 <div class="preview-browser-bar" aria-hidden="true"><i></i><i></i><i></i></div>
-                <iframe id="preview-frame" title="文章真实预览" sandbox="allow-same-origin allow-scripts"></iframe>
+                <iframe
+                  id="preview-frame"
+                  title="文章真实预览"
+                  sandbox="allow-same-origin allow-scripts"
+                ></iframe>
               </div>
             </div>
           </aside>
@@ -147,50 +212,127 @@
 
     <div class="drawer-scrim" id="drawer-scrim"></div>
 
-    <aside class="drawer" id="settings-drawer" aria-labelledby="settings-title" aria-hidden="true">
+    <aside
+      class="drawer"
+      id="settings-drawer"
+      role="dialog"
+      aria-modal="true"
+      inert
+      aria-labelledby="settings-title"
+      aria-hidden="true"
+    >
       <div class="drawer-header">
-        <div><p class="panel-eyebrow">ARTICLE SETTINGS</p><h2 id="settings-title">文章设置</h2></div>
-        <button class="btn btn-icon drawer-close" type="button" data-close-drawer aria-label="关闭文章设置">×</button>
+        <div>
+          <p class="panel-eyebrow">ARTICLE SETTINGS</p>
+          <h2 id="settings-title">文章设置</h2>
+        </div>
+        <button
+          class="btn btn-icon drawer-close"
+          type="button"
+          data-close-drawer
+          aria-label="关闭文章设置"
+        >
+          ×
+        </button>
       </div>
       <fieldset class="drawer-body" id="meta-fields" disabled>
         <div class="meta-field">
           <label for="meta-description">文章摘要</label>
-          <textarea id="meta-description" class="meta-control" rows="4" maxlength="300" placeholder="这篇文章解决了什么问题？" data-editable-control></textarea>
+          <textarea
+            id="meta-description"
+            class="meta-control"
+            rows="4"
+            maxlength="300"
+            placeholder="这篇文章解决了什么问题？"
+            data-editable-control
+          ></textarea>
           <span class="field-hint">用于博客列表、首页和 SEO。</span>
         </div>
         <div class="meta-field">
-          <label for="meta-category">主分类</label>
-          <input id="meta-category" class="meta-control" type="text" list="category-options" placeholder="前端与移动端" data-editable-control />
-          <datalist id="category-options"></datalist>
-          <div class="taxonomy-suggestions" id="category-suggestions" aria-label="常用分类"></div>
-          <span class="field-hint">每篇文章只保留一个主分类。</span>
+          <span class="meta-label">主分类（单选）</span>
+          <div
+            class="category-options"
+            id="settings-category-options"
+            role="group"
+            aria-label="选择主分类"
+          ></div>
+          <div class="taxonomy-create">
+            <label class="sr-only" for="settings-category-input">新增分类</label>
+            <input
+              id="settings-category-input"
+              class="taxonomy-create__input"
+              type="text"
+              maxlength="40"
+              placeholder="新增分类"
+              autocomplete="off"
+            />
+            <button id="settings-add-category" class="btn btn-small btn-secondary" type="button">
+              新增并选中
+            </button>
+          </div>
+          <span class="field-hint">选择已有分类，或新增一个；每篇文章只保留一个主分类。</span>
         </div>
         <div class="meta-field">
-          <label for="meta-tags">标签</label>
-          <input id="meta-tags" class="meta-control" type="text" list="tag-options" placeholder="Vue 3, Capacitor, Android" data-editable-control />
-          <datalist id="tag-options"></datalist>
-          <div class="taxonomy-suggestions" id="tag-suggestions" aria-label="常用标签"></div>
-          <span class="field-hint">使用英文逗号分隔，建议保留 2–4 个主要标签。</span>
+          <span class="meta-label">标签（多选）</span>
+          <div class="tag-combobox" id="settings-tag-combobox">
+            <div class="tag-combobox__control" data-tag-control="current">
+              <div class="tag-combobox__selected" id="settings-tag-selected"></div>
+              <input
+                id="settings-tag-input"
+                class="tag-combobox__input"
+                type="search"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="settings-tag-options"
+                aria-activedescendant=""
+                maxlength="40"
+                placeholder="搜索或新增标签"
+                autocomplete="off"
+              />
+            </div>
+            <div class="tag-combobox__menu" id="settings-tag-options" role="listbox" hidden></div>
+          </div>
+          <span class="field-hint">输入名称可搜索；不存在时按 Enter 创建。至少保留一个标签。</span>
         </div>
         <div class="meta-field">
           <span class="meta-label">封面</span>
-          <div class="cover-box">
-            <input id="meta-cover-file" class="visually-hidden-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
-            <button id="btn-upload-cover" class="btn btn-secondary" type="button">选择并压缩图片</button>
-            <span id="cover-status">未设置</span>
-          </div>
+          <button id="cover-select-trigger" class="setting-trigger" type="button">
+            <span class="setting-trigger__value" id="trigger-cover-value">自动图库</span>
+            <span class="setting-trigger__chevron">›</span>
+          </button>
+          <input
+            id="meta-cover-file"
+            class="visually-hidden-file"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+          />
         </div>
         <div class="meta-grid">
           <div class="meta-field">
             <label for="meta-publishedAt">发布日期</label>
-            <input id="meta-publishedAt" class="meta-control" type="text" placeholder="发布时自动填写" data-editable-control />
+            <input
+              id="meta-publishedAt"
+              class="meta-control"
+              type="text"
+              placeholder="发布时自动填写"
+              data-editable-control
+            />
           </div>
           <div class="meta-field">
             <label for="meta-updatedAt">更新日期</label>
-            <input id="meta-updatedAt" class="meta-control" type="text" placeholder="可选" data-editable-control />
+            <input
+              id="meta-updatedAt"
+              class="meta-control"
+              type="text"
+              placeholder="可选"
+              data-editable-control
+            />
           </div>
         </div>
-        <label class="check-label"><input id="meta-featured" type="checkbox" data-editable-control /> 设为精选文章</label>
+        <label class="check-label"
+          ><input id="meta-featured" type="checkbox" data-editable-control /> 设为精选文章</label
+        >
         <details class="advanced-settings">
           <summary>高级信息</summary>
           <div class="meta-field">
@@ -208,56 +350,209 @@
       </fieldset>
     </aside>
 
-    <aside class="drawer publish-drawer" id="publish-drawer" aria-labelledby="publish-title" aria-hidden="true">
+    <aside
+      class="drawer publish-drawer"
+      id="publish-drawer"
+      role="dialog"
+      aria-modal="true"
+      inert
+      aria-labelledby="publish-title"
+      aria-hidden="true"
+    >
       <div class="drawer-header">
-        <div><p class="panel-eyebrow">PUBLISH CHECK</p><h2 id="publish-title">发布检查</h2></div>
-        <button class="btn btn-icon drawer-close" type="button" data-close-drawer aria-label="关闭发布检查">×</button>
+        <div>
+          <p class="panel-eyebrow">PUBLISH CHECK</p>
+          <h2 id="publish-title">发布检查</h2>
+        </div>
+        <button
+          class="btn btn-icon drawer-close"
+          type="button"
+          data-close-drawer
+          aria-label="关闭发布检查"
+        >
+          ×
+        </button>
       </div>
       <div class="drawer-body">
-        <p class="publish-intro">一次确认文章是否适合公开，不要求理解实现字段，也不会直接部署上线。</p>
+        <p class="publish-intro">
+          一次确认文章是否适合公开，不要求理解实现字段，也不会直接部署上线。
+        </p>
         <div class="publish-checks" id="publish-checks">
-          <div class="publish-check" data-check="content"><span class="check-icon">—</span><div><strong>文章信息完整</strong><small>标题与摘要</small></div><span class="check-result">待检查</span></div>
-          <div class="publish-check" data-check="taxonomy"><span class="check-icon">—</span><div><strong>分类和标签有效</strong><small>一个分类，至少一个标签</small></div><span class="check-result">待检查</span></div>
-          <div class="publish-check" data-check="headings"><span class="check-icon">—</span><div><strong>标题层级连续</strong><small>二级、三级标题没有跳级</small></div><span class="check-result">待检查</span></div>
-          <div class="publish-check" data-check="preview"><span class="check-icon">—</span><div><strong>页面预览可用</strong><small>真实站点页面已连接</small></div><span class="check-result">待检查</span></div>
+          <div class="publish-check" data-check="content">
+            <span class="check-icon">—</span>
+            <div><strong>文章信息完整</strong><small>标题与摘要</small></div>
+            <span class="check-result">待检查</span>
+          </div>
+          <div class="publish-check" data-check="taxonomy">
+            <span class="check-icon">—</span>
+            <div><strong>分类和标签有效</strong><small>一个分类，至少一个标签</small></div>
+            <span class="check-result">待检查</span>
+          </div>
+          <div class="publish-check" data-check="headings">
+            <span class="check-icon">—</span>
+            <div><strong>标题层级连续</strong><small>二级、三级标题没有跳级</small></div>
+            <span class="check-result">待检查</span>
+          </div>
+          <div class="publish-check" data-check="preview">
+            <span class="check-icon">—</span>
+            <div><strong>页面预览可用</strong><small>真实站点页面已连接</small></div>
+            <span class="check-result">待检查</span>
+          </div>
         </div>
         <p class="publish-check-status" id="publish-check-status">正在检查当前文章…</p>
         <div class="publish-summary">
           <span>发布后将出现于</span>
-          <ul class="impact-list"><li>博客目录</li><li>首页文章区</li><li>归档时间线</li><li>文章详情</li><li>RSS 订阅源</li><li>站点地图</li></ul>
+          <ul class="impact-list">
+            <li>博客目录</li>
+            <li>首页文章区</li>
+            <li>归档时间线</li>
+            <li>文章详情</li>
+            <li>RSS 订阅源</li>
+            <li>站点地图</li>
+          </ul>
         </div>
         <div class="publish-summary">
           <span>部署边界</span>
           <p>这里只更新本地文章状态，不会上传或部署到线上服务器。</p>
           <small>不会自动执行 Git 提交、推送或服务器同步。</small>
         </div>
-        <button id="btn-verify" class="btn btn-secondary verify-button" type="button">运行发布前完整检查</button>
+        <button id="btn-verify" class="btn btn-secondary verify-button" type="button">
+          运行发布前完整检查
+        </button>
         <pre id="verify-output" hidden>等待运行…</pre>
       </div>
       <div class="drawer-footer">
         <button class="btn btn-secondary" type="button" data-close-drawer>返回修改</button>
-        <button class="btn btn-accent" id="btn-confirm-publish" type="button" disabled>标记为公开</button>
+        <button class="btn btn-accent" id="btn-confirm-publish" type="button" disabled>
+          标记为公开
+        </button>
       </div>
     </aside>
 
     <div class="modal-overlay" id="new-article-modal" hidden>
-      <form class="modal-content" id="new-article-form" aria-labelledby="new-title-heading">
+      <form
+        class="modal-content"
+        id="new-article-form"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="new-title-heading"
+      >
         <div class="modal-header">
-          <div><p class="panel-eyebrow">NEW DRAFT</p><h2 id="new-title-heading">创建 Markdown 草稿</h2></div>
+          <div>
+            <p class="panel-eyebrow">NEW DRAFT</p>
+            <h2 id="new-title-heading">创建 Markdown 草稿</h2>
+          </div>
           <button class="btn btn-icon" id="btn-close-new" type="button" aria-label="关闭">×</button>
         </div>
         <div class="modal-body new-article-fields">
-          <div class="meta-field"><label for="new-title">标题</label><input class="meta-control" id="new-title" name="title" type="text" required /></div>
-          <div class="meta-field"><label for="new-slug">Slug</label><input class="meta-control" id="new-slug" name="slug" type="text" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" /></div>
-          <div class="meta-field field-wide"><label for="new-description">文章摘要</label><textarea class="meta-control" id="new-description" name="description" rows="3" required></textarea></div>
-          <div class="meta-field"><label for="new-category">主分类</label><input class="meta-control" id="new-category" name="category" type="text" list="category-options" required /></div>
-          <div class="meta-field"><label for="new-tags">标签</label><input class="meta-control" id="new-tags" name="tags" type="text" placeholder="Astro, TypeScript" required /></div>
+          <div class="meta-field">
+            <label for="new-title">标题</label
+            ><input class="meta-control" id="new-title" name="title" type="text" required />
+          </div>
+          <div class="meta-field">
+            <label for="new-slug">Slug</label
+            ><input
+              class="meta-control"
+              id="new-slug"
+              name="slug"
+              type="text"
+              required
+              pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+            />
+          </div>
+          <div class="meta-field field-wide">
+            <label for="new-description">文章摘要</label
+            ><textarea
+              class="meta-control"
+              id="new-description"
+              name="description"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <div class="meta-field field-wide">
+            <span class="meta-label">主分类（单选）</span>
+            <div
+              class="category-options"
+              id="new-category-options"
+              role="group"
+              aria-label="为新草稿选择主分类"
+            ></div>
+            <div class="taxonomy-create">
+              <label class="sr-only" for="new-category-input">为新草稿新增分类</label>
+              <input
+                id="new-category-input"
+                class="taxonomy-create__input"
+                type="text"
+                maxlength="40"
+                placeholder="新增分类"
+                autocomplete="off"
+              />
+              <button id="new-add-category" class="btn btn-small btn-secondary" type="button">
+                新增并选中
+              </button>
+            </div>
+          </div>
+          <div class="meta-field field-wide">
+            <span class="meta-label">标签（多选）</span>
+            <div class="tag-combobox" id="new-tag-combobox">
+              <div class="tag-combobox__control" data-tag-control="new">
+                <div class="tag-combobox__selected" id="new-tag-selected"></div>
+                <input
+                  id="new-tag-input"
+                  class="tag-combobox__input"
+                  type="search"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-expanded="false"
+                  aria-controls="new-tag-options"
+                  aria-activedescendant=""
+                  maxlength="40"
+                  placeholder="搜索或新增标签"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="tag-combobox__menu" id="new-tag-options" role="listbox" hidden></div>
+            </div>
+            <span class="field-hint">选择已有标签，或输入新名称后按 Enter 创建。</span>
+          </div>
         </div>
         <div class="modal-footer">
           <button id="btn-cancel-new" class="btn btn-secondary" type="button">取消</button>
           <button class="btn btn-primary" type="submit">创建并开始写作</button>
         </div>
       </form>
+    </div>
+
+    <div class="selection-panel" id="selection-panel" hidden>
+      <div class="selection-panel__scrim" id="selection-scrim"></div>
+      <div
+        class="selection-panel__sheet"
+        id="selection-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="selection-title"
+      >
+        <div class="selection-panel__handle" aria-hidden="true"></div>
+        <div class="selection-panel__header">
+          <div>
+            <h2 id="selection-title">选择</h2>
+            <p id="selection-subtitle"></p>
+          </div>
+          <button
+            class="btn btn-icon selection-panel__close"
+            id="selection-close"
+            type="button"
+            aria-label="关闭选择面板"
+          >
+            ×
+          </button>
+        </div>
+        <div class="selection-panel__body" id="selection-content"></div>
+        <div class="selection-panel__footer">
+          <button class="btn btn-primary" id="selection-done" type="button">完成</button>
+        </div>
+      </div>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>

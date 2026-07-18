@@ -189,7 +189,7 @@ function initCarousel(carousel: HTMLElement): Cleanup {
   };
 }
 
-/** 增强首页轮播和上海时间；所有监听与计时器都随 Astro 页面切换清理。 */
+/** 增强首页轮播；Header 与状态条时钟由全站导航生命周期统一维护。 */
 export function initHomeDashboard(): Cleanup {
   const dashboard = document.querySelector<HTMLElement>('#home-dashboard');
   if (!dashboard) return () => undefined;
@@ -197,47 +197,7 @@ export function initHomeDashboard(): Cleanup {
   const cleanups = Array.from(dashboard.querySelectorAll<HTMLElement>('[data-home-carousel]')).map(
     initCarousel,
   );
-  const time = dashboard.querySelector<HTMLTimeElement>('[data-home-time]');
-  let formatter = createTimeFormatter(time?.dataset.homeTimeZone ?? 'Asia/Shanghai');
-
-  function createTimeFormatter(timeZone: string) {
-    try {
-      return new Intl.DateTimeFormat('zh-CN', {
-        timeZone,
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      });
-    } catch {
-      return new Intl.DateTimeFormat('zh-CN', {
-        timeZone: 'Asia/Shanghai',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      });
-    }
-  }
-
-  const updateTime = () => {
-    if (!time) return;
-    const now = new Date();
-    time.textContent = formatter.format(now);
-    time.dateTime = now.toISOString();
-  };
-
-  updateTime();
-  const clockInterval = window.setInterval(updateTime, 30_000);
-  const handleTimeZoneChange = (event: Event) => {
-    if (!time || !(event instanceof CustomEvent) || typeof event.detail !== 'string') return;
-    time.dataset.homeTimeZone = event.detail;
-    formatter = createTimeFormatter(event.detail);
-    updateTime();
-  };
-  time?.addEventListener('home:time-zone-change', handleTimeZoneChange);
-
   return () => {
-    window.clearInterval(clockInterval);
-    time?.removeEventListener('home:time-zone-change', handleTimeZoneChange);
     cleanups.reverse().forEach((dispose) => dispose());
   };
 }

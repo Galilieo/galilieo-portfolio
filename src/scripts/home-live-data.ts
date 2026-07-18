@@ -275,12 +275,9 @@ function writeWeatherCache(latitude: number, longitude: number, current: Weather
 }
 
 function applyTimeZone(status: HTMLElement, timeZone: string, label: string) {
-  const time = status.querySelector<HTMLTimeElement>('[data-home-time]');
   const timeLabel = status.querySelector<HTMLElement>('[data-home-time-label]');
   if (timeLabel) timeLabel.textContent = label;
-  if (!time) return;
-  time.dataset.homeTimeZone = timeZone;
-  time.dispatchEvent(new CustomEvent('home:time-zone-change', { detail: timeZone }));
+  document.dispatchEvent(new CustomEvent('site:time-zone-change', { detail: timeZone }));
 }
 
 function renderEnvironment(status: HTMLElement, environment: EnvironmentCache) {

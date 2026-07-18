@@ -1,52 +1,18 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import alleyCover from '../../assets/images/covers/scene-alley.webp';
-import bloomCover from '../../assets/images/covers/scene-bloom.webp';
-import orbitCover from '../../assets/images/covers/scene-orbit.webp';
+import { getBlogCover, type BlogCoverArtwork } from '../../lib/blog-cover';
 import TagList from '../common/TagList.astro';
 
 interface Props {
   article: CollectionEntry<'blog'>;
+  artwork?: BlogCoverArtwork;
   headingLevel?: 2 | 3;
-  artworkIndex?: number;
 }
 
-const { article, headingLevel = 2, artworkIndex = 0 } = Astro.props;
+const { article, artwork: providedArtwork, headingLevel = 2 } = Astro.props;
 const Heading = headingLevel === 3 ? 'h3' : 'h2';
-const artworkSequences = {
-  前端与移动端: [
-    { image: alleyCover, key: 'alley' },
-    { image: orbitCover, key: 'orbit' },
-    { image: bloomCover, key: 'bloom' },
-  ],
-  实习复盘: [
-    { image: alleyCover, key: 'alley' },
-    { image: bloomCover, key: 'bloom' },
-    { image: orbitCover, key: 'orbit' },
-  ],
-  工程笔记: [
-    { image: orbitCover, key: 'orbit' },
-    { image: bloomCover, key: 'bloom' },
-    { image: alleyCover, key: 'alley' },
-  ],
-  'AI 应用学习': [
-    { image: orbitCover, key: 'orbit' },
-    { image: alleyCover, key: 'alley' },
-    { image: bloomCover, key: 'bloom' },
-  ],
-  项目日志: [
-    { image: bloomCover, key: 'bloom' },
-    { image: alleyCover, key: 'alley' },
-    { image: orbitCover, key: 'orbit' },
-  ],
-} as const;
-const categorySequence =
-  artworkSequences[article.data.category as keyof typeof artworkSequences] ??
-  artworkSequences['项目日志'];
-const artwork = article.data.cover
-  ? { image: article.data.cover, key: 'custom' }
-  : categorySequence[artworkIndex % categorySequence.length];
+const artwork = providedArtwork ?? getBlogCover(article);
 ---
 
 <article
@@ -56,7 +22,11 @@ const artwork = article.data.cover
   data-article-tags={JSON.stringify(article.data.tags)}
 >
   <a class="article-matrix-card__link" href={`/notes/${article.id}/`}>
-    <div class="article-matrix-card__visual" aria-hidden="true">
+    <div
+      class="article-matrix-card__visual"
+      aria-hidden="true"
+      data-blog-cover={`${article.id}:${artwork.key}`}
+    >
       {
         (
           <Image
@@ -66,8 +36,9 @@ const artwork = article.data.cover
             ]}
             src={artwork.image}
             alt=""
+            style={`object-position: ${artwork.position}`}
             widths={[320, 480, 720]}
-            sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 1180px) 46vw, 430px"
+            sizes="(max-width: 580px) calc((100vw - 38px) / 2), (max-width: 1180px) 46vw, 430px"
             loading="lazy"
           />
         )

@@ -26,6 +26,12 @@ import { siteConfig } from '../../config/site';
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </button>
+      <div class="header-clock" aria-label="本地时间">
+        <span class="header-clock__label" aria-hidden="true">Local</span>
+        <time data-site-time data-site-time-zone={siteConfig.homeStatus.timeZone} datetime=""
+          >--:--</time
+        >
+      </div>
       <button class="theme-toggle" type="button" aria-label="切换至深色模式" aria-pressed="false">
         <span aria-hidden="true"></span>
       </button>

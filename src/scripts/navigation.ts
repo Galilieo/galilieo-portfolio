@@ -7,8 +7,59 @@ export function initNavigation(): Cleanup {
   const siteNav = document.querySelector<HTMLElement>('.site-nav');
   if (!header || !menuToggle || !siteNav) return () => {};
   const navLinks = Array.from(siteNav.querySelectorAll<HTMLAnchorElement>('a'));
+  const clocks = Array.from(document.querySelectorAll<HTMLTimeElement>('[data-site-time]'));
+  const timeZoneStorageKey = 'galilieo:site-time-zone';
+  const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  let preferredTimeZone = browserTimeZone;
+  try {
+    preferredTimeZone = sessionStorage.getItem(timeZoneStorageKey) || browserTimeZone;
+  } catch {
+    // Session storage 不可用时继续使用浏览器时区。
+  }
+  if (preferredTimeZone)
+    clocks.forEach((clock) => {
+      clock.dataset.siteTimeZone = preferredTimeZone;
+    });
   const mobileViewport = window.matchMedia('(max-width: 920px)');
   let focusFrame = 0;
+
+  const createTimeFormatter = (timeZone: string) => {
+    try {
+      return new Intl.DateTimeFormat('zh-CN', {
+        timeZone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+    } catch {
+      return new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+    }
+  };
+  const updateClocks = () => {
+    const now = new Date();
+    clocks.forEach((clock) => {
+      const formatter = createTimeFormatter(clock.dataset.siteTimeZone ?? 'Asia/Shanghai');
+      clock.textContent = formatter.format(now);
+      clock.dateTime = now.toISOString();
+    });
+  };
+  const onTimeZoneChange = (event: Event) => {
+    if (!(event instanceof CustomEvent) || typeof event.detail !== 'string') return;
+    clocks.forEach((clock) => {
+      clock.dataset.siteTimeZone = event.detail;
+    });
+    try {
+      sessionStorage.setItem(timeZoneStorageKey, event.detail);
+    } catch {
+      // 时区仍会更新，只是不跨页面保留。
+    }
+    updateClocks();
+  };
 
   const syncAvailability = () => {
     const closedOnMobile = mobileViewport.matches && !siteNav.classList.contains('is-open');
@@ -71,7 +122,10 @@ export function initNavigation(): Cleanup {
   document.addEventListener('pointerdown', onPointerDown);
   window.addEventListener('scroll', updateHeader, { passive: true });
   mobileViewport.addEventListener('change', onViewportChange);
+  document.addEventListener('site:time-zone-change', onTimeZoneChange);
   updateHeader();
+  updateClocks();
+  const clockInterval = window.setInterval(updateClocks, 30_000);
   syncAvailability();
 
   return () => {
@@ -82,6 +136,8 @@ export function initNavigation(): Cleanup {
     document.removeEventListener('pointerdown', onPointerDown);
     window.removeEventListener('scroll', updateHeader);
     mobileViewport.removeEventListener('change', onViewportChange);
+    document.removeEventListener('site:time-zone-change', onTimeZoneChange);
+    window.clearInterval(clockInterval);
     siteNav.inert = false;
     navLinks.forEach((link) => link.removeAttribute('tabindex'));
   };

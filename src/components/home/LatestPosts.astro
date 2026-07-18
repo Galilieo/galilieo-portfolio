@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import { createBlogCoverMap, getBlogCover } from '../../lib/blog-cover';
 
 const publishedPosts = (await getCollection('blog'))
   .filter((post) => !post.data.draft && post.data.publishedAt)
@@ -9,6 +10,11 @@ const selectedPosts = [
   ...publishedPosts.filter((post) => post.data.featured),
   ...publishedPosts.filter((post) => !post.data.featured),
 ].slice(0, 3);
+const coverMap = createBlogCoverMap(publishedPosts);
+const selectedSlides = selectedPosts.map((post) => ({
+  post,
+  artwork: coverMap.get(post.id) ?? getBlogCover(post),
+}));
 ---
 
 <section
@@ -29,16 +35,16 @@ const selectedPosts = [
   </header>
 
   {
-    selectedPosts.length > 0 ? (
+    selectedSlides.length > 0 ? (
       <div class="home-carousel__viewport">
-        {selectedPosts.map((post, index) => (
+        {selectedSlides.map(({ post, artwork }, index) => (
           <article
             class="home-carousel__slide"
             data-home-slide
             hidden={index !== 0}
             role="group"
             aria-roledescription="slide"
-            aria-label={`${index + 1} / ${selectedPosts.length}`}
+            aria-label={`${index + 1} / ${selectedSlides.length}`}
           >
             <a class="home-carousel__card-link" href={`/notes/${post.id}/`}>
               <div
@@ -47,21 +53,17 @@ const selectedPosts = [
                   'home-notes__media',
                   `home-carousel__media--tone-${(index + 1) % 3}`,
                 ]}
+                data-blog-cover={`${post.id}:${artwork.key}`}
               >
-                {post.data.cover ? (
-                  <Image
-                    class="home-carousel__cover"
-                    src={post.data.cover}
-                    alt=""
-                    widths={[360, 520, 720]}
-                    sizes="(max-width: 999px) 100vw, 36vw"
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                  />
-                ) : (
-                  <span class="home-carousel__placeholder" aria-hidden="true">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                )}
+                <Image
+                  class="home-carousel__cover"
+                  src={artwork.image}
+                  alt=""
+                  widths={[360, 520, 720]}
+                  sizes="(max-width: 999px) 100vw, 36vw"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  style={`object-position: ${artwork.position}`}
+                />
               </div>
               <div class="home-carousel__scrim" aria-hidden="true" />
               <div class="home-carousel__content home-notes__content">
@@ -89,9 +91,9 @@ const selectedPosts = [
   }
 
   {
-    selectedPosts.length > 1 && (
+    selectedSlides.length > 1 && (
       <div class="home-carousel__dots" aria-label="选择文章">
-        {selectedPosts.map((post, index) => (
+        {selectedSlides.map(({ post }, index) => (
           <button
             type="button"
             data-home-dot

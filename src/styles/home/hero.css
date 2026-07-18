@@ -154,7 +154,7 @@
 .home-profile__role {
   margin-top: 14px;
   color: var(--home-text);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 650;
 }
 
@@ -162,7 +162,7 @@
   max-width: 650px;
   margin-top: 12px;
   color: var(--home-text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.75;
 }
 
@@ -415,7 +415,7 @@
 .home-utility__github-meta dt {
   color: var(--home-text-muted);
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -424,7 +424,7 @@
   overflow: hidden;
   color: var(--home-text);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.02em;
   text-overflow: ellipsis;
@@ -439,7 +439,7 @@
   color: var(--home-text-muted);
   background: color-mix(in srgb, var(--home-surface) 58%, transparent);
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 9px;
   line-height: 1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -447,8 +447,8 @@
 }
 
 .home-utility__github-body {
-  min-height: 132px;
-  margin: 18px 0 14px;
+  min-height: 104px;
+  margin: 14px 0 10px;
   display: grid;
   grid-template-columns: minmax(116px, 0.72fr) minmax(0, 1.28fr);
   gap: 20px;
@@ -481,7 +481,7 @@
 .home-utility__github-total span {
   padding-bottom: 3px;
   color: var(--home-text-secondary);
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
 }
 
@@ -509,7 +509,7 @@
   overflow: hidden;
   color: var(--home-text);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   text-align: right;
   text-overflow: ellipsis;
@@ -543,15 +543,15 @@
 
 .home-utility__activity {
   position: relative;
-  height: 70px;
-  min-height: 70px;
-  margin-top: 8px;
+  height: 52px;
+  min-height: 52px;
+  margin-top: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--home-text-muted);
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.05em;
   transition: opacity 280ms ease;
 }
@@ -582,22 +582,22 @@
 }
 
 .home-utility__activity [data-level='1'] {
-  height: 20px;
+  height: 16px;
   background: color-mix(in srgb, var(--home-accent) 36%, var(--home-surface));
 }
 
 .home-utility__activity [data-level='2'] {
-  height: 34px;
+  height: 26px;
   background: color-mix(in srgb, var(--home-accent) 56%, var(--home-surface));
 }
 
 .home-utility__activity [data-level='3'] {
-  height: 50px;
+  height: 38px;
   background: color-mix(in srgb, var(--home-accent) 78%, var(--home-surface));
 }
 
 .home-utility__activity [data-level='4'] {
-  height: 66px;
+  height: 48px;
   background: var(--home-accent);
   box-shadow: 0 0 12px color-mix(in srgb, var(--home-glow) 42%, transparent);
 }
@@ -609,7 +609,7 @@
   gap: 8px;
   color: var(--home-text-muted);
   font-family: var(--mono);
-  font-size: 7px;
+  font-size: 8px;
   letter-spacing: 0.04em;
 }
 
@@ -651,7 +651,7 @@
   gap: 12px;
   border-radius: 7px;
   color: var(--home-text-secondary);
-  font-size: 11px;
+  font-size: 12px;
   text-decoration: none;
   transition: color 180ms ease;
 }

@@ -417,7 +417,8 @@ body:has(.interior-page) {
 }
 
 .project-matrix-card__visual {
-  min-height: 154px;
+  min-height: 0;
+  aspect-ratio: 16 / 7;
   display: grid;
   place-items: center;
 }
@@ -457,7 +458,7 @@ body:has(.interior-page) {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 22px;
 }
 
 .project-matrix-card__topline,
@@ -468,14 +469,14 @@ body:has(.interior-page) {
   gap: 16px;
   color: var(--home-text-muted);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .project-matrix-card h2,
 .article-matrix-card__title {
-  margin: 22px 0 0;
+  margin: 18px 0 0;
   color: var(--home-text);
   font-family: var(--serif);
   font-weight: 600;
@@ -486,23 +487,23 @@ body:has(.interior-page) {
 }
 
 .project-matrix-card h2 {
-  font-size: clamp(28px, 2.3vw, 38px);
+  font-size: clamp(28px, 2.3vw, 36px);
 }
 
 .article-matrix-card__title {
-  font-size: clamp(25px, 2vw, 32px);
+  font-size: clamp(24px, 1.8vw, 28px);
 }
 
 .project-matrix-card__description,
 .article-matrix-card__description {
-  margin: 15px 0 0;
+  margin: 12px 0 0;
   color: var(--home-text-secondary);
-  font-size: 13px;
-  line-height: 1.8;
+  font-size: 14px;
+  line-height: 1.7;
 }
 
 .project-matrix-card__description {
-  min-height: 4.8em;
+  min-height: 4.4em;
 }
 
 .article-matrix-card__description {
@@ -515,7 +516,7 @@ body:has(.interior-page) {
 .project-matrix-card .inline-tags,
 .article-matrix-card .inline-tags {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 18px;
 }
 
 .project-matrix-card .inline-tags li,
@@ -531,12 +532,12 @@ body:has(.interior-page) {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 22px;
-  padding-top: 18px;
+  margin-top: 18px;
+  padding-top: 14px;
   border-top: 1px solid var(--interior-border);
   color: var(--home-text-muted);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 10.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -556,7 +557,7 @@ body:has(.interior-page) {
 }
 
 .article-matrix-card__visual {
-  min-height: 136px;
+  min-height: 160px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -581,7 +582,7 @@ body:has(.interior-page) {
   max-width: 170px;
   color: var(--home-text-secondary);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   text-align: right;
   text-transform: uppercase;
@@ -1870,14 +1871,112 @@ html:not(.js) .archive-timeline-panel + .archive-timeline-panel {
     flex-direction: column;
   }
 
-  .project-grid,
-  .article-grid {
+  .project-grid {
     gap: 18px;
+    grid-template-columns: 1fr;
   }
 
-  .project-matrix-card__body,
+  .article-grid {
+    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .article-matrix-card {
+    border-radius: 18px;
+  }
+
+  .article-matrix-card__visual {
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    padding: 14px 16px;
+  }
+
+  .project-matrix-card__body {
+    padding: 18px;
+  }
+
   .article-matrix-card__body {
-    padding: 22px;
+    padding: 12px;
+  }
+
+  .project-matrix-card h2 {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-top: 14px;
+    font-size: 22px;
+    line-height: 1.32;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-wrap: balance;
+    word-break: auto-phrase;
+  }
+
+  .article-matrix-card__title {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-top: 8px;
+    font-size: 17px;
+    line-height: 1.31;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    text-wrap: balance;
+    word-break: auto-phrase;
+  }
+
+  .project-matrix-card__description {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .article-matrix-card__description {
+    display: none;
+  }
+
+  .project-matrix-card__description {
+    min-height: 0;
+  }
+
+  .project-matrix-card .inline-tags {
+    padding-top: 14px;
+    gap: 5px;
+  }
+
+  .article-matrix-card .inline-tags {
+    display: none;
+  }
+
+  .project-matrix-card .inline-tags li {
+    padding: 3px 7px;
+    font-size: 10px;
+  }
+
+  .article-matrix-card__footer {
+    display: none;
+  }
+
+  .project-matrix-card__footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    font-size: 10px;
+  }
+
+  .article-matrix-card__topline {
+    justify-content: flex-end;
+    font-size: 10px;
+  }
+
+  .article-matrix-card__topline span {
+    display: none;
+  }
+
+  .project-matrix-card__topline {
+    font-size: 10px;
+  }
+
+  .project-matrix-card__visual {
+    min-height: 0;
+    aspect-ratio: 5 / 2;
   }
 
   .about-dossier {

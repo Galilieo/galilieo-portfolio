@@ -9,6 +9,7 @@ const generatedPages = [
   resolve(distRoot, 'archive', 'index.html'),
   resolve(distRoot, 'about', 'index.html'),
 ].map((file) => readFileSync(file, 'utf8'));
+const blogPage = generatedPages[1];
 const generatedCss = readdirSync(resolve(distRoot, '_astro'))
   .filter((file) => file.endsWith('.css'))
   .map((file) => readFileSync(resolve(distRoot, '_astro', file), 'utf8'))
@@ -58,7 +59,7 @@ for (const marker of forbiddenHomepageMarkers) {
 
 for (const marker of [
   'data-home-carousel',
-  'data-home-time',
+  'data-site-time',
   'data-github-activity',
   'data-github-total',
   'data-github-active-days',
@@ -74,6 +75,48 @@ for (const marker of [
   'class="home-carousel__section-link" href="/blog/"',
 ]) {
   if (!homepage.includes(marker)) failures.push(`Homepage must render ${marker}.`);
+}
+
+if (generatedPages.some((html) => !html.includes('class="header-clock"'))) {
+  failures.push('Every public page must render the compact Header clock.');
+}
+const homepageClockCount = (homepage.match(/\bdata-site-time(?:=|\s|>)/g) ?? []).length;
+if (homepageClockCount !== 2) {
+  failures.push(
+    `Homepage must render one Header clock and one status clock; received ${homepageClockCount}.`,
+  );
+}
+if (!generatedCss.includes('.header-clock')) {
+  failures.push('Generated CSS must include the Header clock styles.');
+}
+if (
+  !/\.header-clock\{(?=[^}]*position:absolute)(?=[^}]*top:3px)(?=[^}]*right:0)(?=[^}]*display:inline-flex)/.test(
+    generatedCss,
+  )
+) {
+  failures.push('Mobile Header must place the shared clock inside its top edge.');
+}
+if (!/\.site-header__inner\{padding-top:14px/.test(generatedCss)) {
+  failures.push('Mobile Header must reserve a compact top rail for the clock.');
+}
+
+const homepageBlogCovers = [...homepage.matchAll(/data-blog-cover="([^"]+)"/g)].map(
+  (match) => match[1],
+);
+if (homepageBlogCovers.length !== 3) {
+  failures.push(
+    `Homepage must render three selected article covers; received ${homepageBlogCovers.length}.`,
+  );
+}
+for (const cover of homepageBlogCovers) {
+  if (!blogPage.includes(`data-blog-cover="${cover}"`)) {
+    failures.push(`Homepage and blog directory must share cover ${cover}.`);
+  }
+}
+const homeNotesMarkup =
+  homepage.match(/<section class="[^"]*home-notes[\s\S]*?<\/section>/)?.[0] ?? '';
+if (homeNotesMarkup.includes('home-carousel__placeholder')) {
+  failures.push('Selected Writing must use the article cover instead of the numbered placeholder.');
 }
 
 if (!homepage.includes('Public events · 30d')) {

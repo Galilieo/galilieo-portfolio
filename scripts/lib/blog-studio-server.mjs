@@ -25,6 +25,14 @@ const DEFAULT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..'
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost']);
 const SESSION_MAX_AGE_SECONDS = 24 * 60 * 60;
 const STATIC_FILES = new Set(['avatar.webp', 'index.html', 'studio.css', 'studio.js']);
+const COVER_KEYS = new Set(['alley', 'bloom', 'orbit', 'window', 'balcony']);
+const COVER_POSITIONS = {
+  alley: 'center 42%',
+  balcony: 'center 42%',
+  bloom: 'center 45%',
+  orbit: 'center',
+  window: 'center 40%',
+};
 const MIME_TYPES = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
@@ -102,7 +110,12 @@ function loopbackHost(hostHeader) {
 function normalizePreviewOrigin(value) {
   try {
     const parsed = new URL(value);
-    if (parsed.protocol !== 'http:' || !LOOPBACK_HOSTS.has(parsed.hostname) || parsed.username || parsed.password) {
+    if (
+      parsed.protocol !== 'http:' ||
+      !LOOPBACK_HOSTS.has(parsed.hostname) ||
+      parsed.username ||
+      parsed.password
+    ) {
       throw new Error();
     }
     return parsed.origin;
@@ -117,7 +130,9 @@ function sameOrigin(req) {
   if (!origin || !host || !loopbackHost(host)) return false;
   try {
     const parsed = new URL(origin);
-    return parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname) && parsed.host === host;
+    return (
+      parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname) && parsed.host === host
+    );
   } catch {
     return false;
   }
@@ -128,7 +143,11 @@ function sessionCookie(req) {
 }
 
 function multipartFile(buffer, contentType) {
-  const boundary = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/)?.slice(1).find(Boolean)?.trim();
+  const boundary = contentType
+    .match(/boundary=(?:"([^"]+)"|([^;]+))/)
+    ?.slice(1)
+    .find(Boolean)
+    ?.trim();
   if (!boundary) throw Object.assign(new Error('Expected multipart/form-data'), { status: 400 });
 
   const marker = Buffer.from(`--${boundary}`);
@@ -183,6 +202,85 @@ function articlePath(blogDirectory, slug) {
   return null;
 }
 
+function scanCoverGallery(repoRoot) {
+  const coversDir = join(repoRoot, 'src', 'assets', 'images', 'covers');
+  const covers = [];
+  if (!existsSync(coversDir)) return covers;
+  for (const key of COVER_KEYS) {
+    const filePath = join(coversDir, `scene-${key}.webp`);
+    if (existsSync(filePath)) {
+      covers.push({
+        key,
+        thumbnail: `/api/covers/thumbnails/${key}`,
+        position: COVER_POSITIONS[key] || 'center',
+      });
+    }
+  }
+  return covers;
+}
+
+function validateCover(value) {
+  if (value === 'auto' || value === undefined || value === null || value === '')
+    return { valid: true, sanitized: undefined };
+  if (typeof value !== 'string') return { valid: false, message: 'cover 必须是字符串' };
+  // Reject paths: must be a simple key without slashes, dots, or colons
+  if (!/^[a-z][a-z0-9]*$/.test(value)) {
+    return { valid: false, message: '封面只接受已知图库键或 auto，不接受文件路径' };
+  }
+  if (!COVER_KEYS.has(value)) {
+    return {
+      valid: false,
+      message: `未知封面键：${value}。可用封面：${[...COVER_KEYS].join(', ')}`,
+    };
+  }
+  return {
+    valid: true,
+    sanitized: `../../assets/images/covers/scene-${value}.webp`,
+  };
+}
+
+const TAXONOMY_MAX_LENGTH = 40;
+
+function hasTaxonomyControlCharacters(value) {
+  return [...value].some((character) => {
+    const code = character.charCodeAt(0);
+    return code <= 0x1f || code === 0x7f;
+  });
+}
+
+function validateTaxonomy(data) {
+  const errors = [];
+  const category = data.category;
+  if (
+    typeof category === 'string' &&
+    (category.length > TAXONOMY_MAX_LENGTH || hasTaxonomyControlCharacters(category))
+  ) {
+    errors.push({
+      field: 'category',
+      message: `分类不能超过 ${TAXONOMY_MAX_LENGTH} 个字符，也不能包含控制字符`,
+    });
+  }
+
+  if (Array.isArray(data.tags)) {
+    if (
+      data.tags.some(
+        (tag) =>
+          typeof tag === 'string' &&
+          (tag.length > TAXONOMY_MAX_LENGTH || hasTaxonomyControlCharacters(tag)),
+      )
+    ) {
+      errors.push({
+        field: 'tags',
+        message: `标签不能超过 ${TAXONOMY_MAX_LENGTH} 个字符，也不能包含控制字符`,
+      });
+    }
+    if (new Set(data.tags).size !== data.tags.length) {
+      errors.push({ field: 'tags', message: '标签不能重复' });
+    }
+  }
+  return errors;
+}
+
 function orderConflict(blogDirectory, order, currentSlug) {
   for (const file of listBlogFiles(blogDirectory)) {
     if (file.slug === currentSlug) continue;
@@ -200,7 +298,9 @@ function validateForSave(data, blogDirectory, currentSlug) {
   const conflict = Number.isInteger(data.order)
     ? orderConflict(blogDirectory, data.order, currentSlug)
     : null;
-  if (conflict) errors.push({ field: 'order', message: `order ${data.order} 已由 ${conflict} 使用` });
+  if (conflict)
+    errors.push({ field: 'order', message: `order ${data.order} 已由 ${conflict} 使用` });
+  errors.push(...validateTaxonomy(data));
   return errors;
 }
 
@@ -220,7 +320,9 @@ function publicArticle(data) {
     'homepageState',
     'body',
   ];
-  return Object.fromEntries(fields.filter((field) => data[field] !== undefined).map((field) => [field, data[field]]));
+  return Object.fromEntries(
+    fields.filter((field) => data[field] !== undefined).map((field) => [field, data[field]]),
+  );
 }
 
 export function createBlogStudioServer({
@@ -251,27 +353,33 @@ export function createBlogStudioServer({
   }
 
   async function listArticles(res) {
-    const articles = listBlogFiles(blogDirectory).map((file) => {
-      try {
-        return summarizeArticle(file);
-      } catch (error) {
-        return {
-          slug: file.slug,
-          title: file.slug,
-          draft: true,
-          editable: false,
-          isMdx: file.isMdx,
-          parseError: error.message,
-        };
-      }
-    }).sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER));
+    const articles = listBlogFiles(blogDirectory)
+      .map((file) => {
+        try {
+          return summarizeArticle(file);
+        } catch (error) {
+          return {
+            slug: file.slug,
+            title: file.slug,
+            draft: true,
+            editable: false,
+            isMdx: file.isMdx,
+            parseError: error.message,
+          };
+        }
+      })
+      .sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER));
 
-    const categories = [...new Set(articles.map((article) => article.category).filter(Boolean))].sort();
+    const categories = [
+      ...new Set(articles.map((article) => article.category).filter(Boolean)),
+    ].sort();
     const tags = [...new Set(articles.flatMap((article) => article.tags ?? []))].sort();
+    const covers = scanCoverGallery(repoRoot);
     sendJson(res, 200, {
       articles,
       categories,
       tags,
+      covers,
       nextOrder: nextOrder(articles.map((article) => article.order).filter(Number.isInteger)),
       previewOrigin,
     });
@@ -283,7 +391,12 @@ export function createBlogStudioServer({
     const path = articlePath(blogDirectory, slug);
     if (!path) return fail(res, 404, `找不到文章：${slug}`);
     const data = parseFrontmatter(readFileSync(path, 'utf8'));
-    sendJson(res, 200, { slug, ...data, isMdx: path.endsWith('.mdx'), editable: path.endsWith('.md') });
+    sendJson(res, 200, {
+      slug,
+      ...data,
+      isMdx: path.endsWith('.mdx'),
+      editable: path.endsWith('.md'),
+    });
   }
 
   async function createArticle(req, res) {
@@ -300,11 +413,21 @@ export function createBlogStudioServer({
         return [];
       }
     });
+
+    // Validate cover
+    const coverResult = validateCover(input.cover);
+    if (!coverResult.valid) {
+      return fail(res, 422, '封面校验失败', {
+        errors: [{ field: 'cover', message: coverResult.message }],
+      });
+    }
+
     const data = {
       title: input.title,
       description: input.description,
       category: input.category,
       tags: input.tags,
+      cover: coverResult.sanitized,
       draft: true,
       featured: false,
       order: nextOrder(orders),
@@ -327,7 +450,19 @@ export function createBlogStudioServer({
 
     const input = await readJson(req);
     const existing = parseFrontmatter(readFileSync(path, 'utf8'));
+
+    const changesCover = Object.hasOwn(input, 'cover');
+    const coverResult = changesCover ? validateCover(input.cover) : null;
+    if (coverResult && !coverResult.valid) {
+      return fail(res, 422, '封面校验失败', {
+        errors: [{ field: 'cover', message: coverResult.message }],
+      });
+    }
+
     const data = { ...existing, ...publicArticle(input) };
+    if (coverResult?.sanitized) data.cover = coverResult.sanitized;
+    else if (changesCover) delete data.cover;
+
     const errors = validateForSave(data, blogDirectory, slug);
     if (errors.length) return fail(res, 422, '文章校验失败', { errors });
 
@@ -375,8 +510,12 @@ export function createBlogStudioServer({
     let stderr = '';
     let settled = false;
     const append = (current, chunk, limit) => `${current}${chunk}`.slice(-limit);
-    child.stdout.on('data', (chunk) => { stdout = append(stdout, chunk, 100_000); });
-    child.stderr.on('data', (chunk) => { stderr = append(stderr, chunk, 50_000); });
+    child.stdout.on('data', (chunk) => {
+      stdout = append(stdout, chunk, 100_000);
+    });
+    child.stderr.on('data', (chunk) => {
+      stderr = append(stderr, chunk, 50_000);
+    });
 
     const finish = (status, payload) => {
       if (settled) return;
@@ -391,22 +530,25 @@ export function createBlogStudioServer({
     }, verifyTimeout);
 
     child.on('error', (error) => finish(500, { error: `无法启动验证：${error.message}` }));
-    child.on('close', (code) => finish(200, {
-      success: code === 0,
-      exitCode: code,
-      stdout,
-      stderr,
-    }));
+    child.on('close', (code) =>
+      finish(200, {
+        success: code === 0,
+        exitCode: code,
+        stdout,
+        stderr,
+      }),
+    );
   }
 
   function serveStatic(req, res, pathname) {
     const name = pathname === '/' ? 'index.html' : basename(pathname);
-    if (!STATIC_FILES.has(name) || pathname !== `/${name}` && pathname !== '/') {
+    if (!STATIC_FILES.has(name) || (pathname !== `/${name}` && pathname !== '/')) {
       return fail(res, 404, 'Not found');
     }
-    const path = name === 'avatar.webp'
-      ? join(repoRoot, 'src', 'assets', 'images', 'profile', 'galilieo-avatar.webp')
-      : join(studioDirectory, name);
+    const path =
+      name === 'avatar.webp'
+        ? join(repoRoot, 'src', 'assets', 'images', 'profile', 'galilieo-avatar.webp')
+        : join(studioDirectory, name);
     if (!existsSync(path) || !statSync(path).isFile()) return fail(res, 404, 'Not found');
     const body = readFileSync(path);
     send(res, 200, req.method === 'HEAD' ? Buffer.alloc(0) : body, {
@@ -427,8 +569,29 @@ export function createBlogStudioServer({
       if (!sameOrigin(req)) return fail(res, 403, 'Same-origin request required');
       const token = randomBytes(32).toString('hex');
       sessions.set(token, Date.now());
-      return sendJson(res, 200, { ok: true }, {
-        'Set-Cookie': `studio_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}`,
+      return sendJson(
+        res,
+        200,
+        { ok: true },
+        {
+          'Set-Cookie': `studio_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}`,
+        },
+      );
+    }
+
+    // Cover gallery (unauthenticated read)
+    if (pathname === '/api/covers' && req.method === 'GET') {
+      return sendJson(res, 200, { covers: scanCoverGallery(repoRoot) });
+    }
+    if (pathname.startsWith('/api/covers/thumbnails/') && req.method === 'GET') {
+      const key = basename(pathname);
+      if (!key || !COVER_KEYS.has(key)) return fail(res, 404, 'Not found');
+      const filePath = join(repoRoot, 'src', 'assets', 'images', 'covers', `scene-${key}.webp`);
+      if (!existsSync(filePath)) return fail(res, 404, 'Not found');
+      const body = readFileSync(filePath);
+      return send(res, 200, body, {
+        'Cache-Control': 'public, max-age=3600',
+        'Content-Type': 'image/webp',
       });
     }
 
@@ -461,5 +624,7 @@ export function createBlogStudioServer({
   return server;
 }
 
-const executedDirectly = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
-if (executedDirectly) createBlogStudioServer({ port: Number(process.env.STUDIO_PORT) || DEFAULT_PORT });
+const executedDirectly =
+  process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (executedDirectly)
+  createBlogStudioServer({ port: Number(process.env.STUDIO_PORT) || DEFAULT_PORT });
