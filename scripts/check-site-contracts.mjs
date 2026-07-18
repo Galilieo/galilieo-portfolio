@@ -100,6 +100,23 @@ await runGeneratedSiteContract({
       }
     }
 
+    const archive = readDist('archive', 'index.html');
+    for (const marker of [
+      'data-archive-course',
+      'class="archive-chain__chapter"',
+      'class="archive-chain__track"',
+      'class="archive-chain__beacon"',
+      'data-archive-voyage',
+      'data-archive-voyage-day',
+      'data-archive-voyage-night',
+    ]) {
+      if (!archive.includes(marker)) failures.push(`Archive must render ${marker}.`);
+    }
+    const voyageCount = (archive.match(/\bdata-archive-voyage(?:=|\s|>)/g) ?? []).length;
+    if (voyageCount !== 1) {
+      failures.push('Archive must render exactly one voyage ending.');
+    }
+
     for (const [name, content] of [
       ['RSS', readDist('rss.xml')],
       ['sitemap', readDist('sitemap-0.xml')],

@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import ArchiveVoyage from '../../components/archive/ArchiveVoyage.astro';
 import TagList from '../../components/common/TagList.astro';
 import SectionHeading from '../../components/common/SectionHeading.astro';
 import { personalTimeline } from '../../data/personal-timeline';
@@ -74,10 +75,15 @@ for (const entry of allEntries) {
 
         {
           allEntries.length > 0 ? (
-            <div class="archive-chain archive-chain--blog">
+            <div class="archive-chain archive-chain--blog" data-archive-course>
               {Object.entries(grouped).map(([month, entries]) => (
                 <section class="archive-chain__month">
-                  <h3 class="archive-chain__month-title">{month}</h3>
+                  <header class="archive-chain__chapter">
+                    <h3 class="archive-chain__month-title">
+                      <strong>{month}</strong>
+                      <span>Current course</span>
+                    </h3>
+                  </header>
                   <ol class="archive-chain__list">
                     {entries.map((entry) => (
                       <li class="archive-chain__item reveal">
@@ -98,6 +104,9 @@ for (const entry of allEntries) {
                             <span aria-hidden="true">阅读笔记 →</span>
                           </footer>
                         </a>
+                        <span class="archive-chain__track" aria-hidden="true">
+                          <i class="archive-chain__beacon" />
+                        </span>
                       </li>
                     ))}
                   </ol>
@@ -128,9 +137,14 @@ for (const entry of allEntries) {
           <span>{String(personalTimeline.length).padStart(2, '0')} milestones</span>
         </header>
 
-        <div class="archive-chain archive-chain--personal">
+        <div class="archive-chain archive-chain--personal" data-archive-course>
           <section class="archive-chain__month">
-            <h3 class="archive-chain__month-title">2024 — Present</h3>
+            <header class="archive-chain__chapter">
+              <h3 class="archive-chain__month-title">
+                <strong>2024 — Present</strong>
+                <span>Personal course</span>
+              </h3>
+            </header>
             <ol class="archive-chain__list">
               {
                 personalTimeline.map((entry) => (
@@ -150,6 +164,9 @@ for (const entry of allEntries) {
                         <span>{entry.destination} →</span>
                       </footer>
                     </a>
+                    <span class="archive-chain__track" aria-hidden="true">
+                      <i class="archive-chain__beacon" />
+                    </span>
                   </li>
                 ))
               }
@@ -158,6 +175,8 @@ for (const entry of allEntries) {
           <span class="archive-chain__end" aria-hidden="true">Present</span>
         </div>
       </section>
+
+      <ArchiveVoyage />
     </div>
   </main>
 </BaseLayout>
