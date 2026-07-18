@@ -103,8 +103,6 @@ await runGeneratedSiteContract({
     const archive = readDist('archive', 'index.html');
     for (const marker of [
       'data-archive-course',
-      'class="archive-chain__chapter"',
-      'class="archive-chain__coordinate"',
       'class="archive-chain__track"',
       'class="archive-chain__beacon"',
       'data-archive-voyage',
@@ -115,6 +113,9 @@ await runGeneratedSiteContract({
       '把走过的路留在这里，新的坐标仍在海面上亮起。',
     ]) {
       if (!archive.includes(marker)) failures.push(`Archive must render ${marker}.`);
+    }
+    for (const marker of ['class="archive-chain__chapter"', 'class="archive-chain__coordinate"']) {
+      if (archive.includes(marker)) failures.push(`Archive must not render ${marker}.`);
     }
     const voyageCount = (archive.match(/\bdata-archive-voyage(?:=|\s|>)/g) ?? []).length;
     if (voyageCount !== 1) {

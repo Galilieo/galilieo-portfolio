@@ -857,54 +857,9 @@ html:not(.js) .archive-timeline-panel + .archive-timeline-panel {
   margin-top: 48px;
 }
 
-.archive-chain__chapter,
 .archive-chain__item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr);
-}
-
-.archive-chain__chapter {
-  position: relative;
-  z-index: 2;
-  min-height: 48px;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.archive-chain__coordinate {
-  position: relative;
-  width: 78px;
-  min-height: 46px;
-  display: grid;
-  grid-column: 2;
-  place-items: center;
-  align-content: center;
-  gap: 3px;
-  margin: 0 auto;
-  padding: 6px 8px;
-  border: 1px solid color-mix(in srgb, var(--archive-course-accent) 38%, transparent);
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--interior-surface-strong) 88%, transparent);
-  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--archive-course-accent) 72%, transparent);
-  color: var(--archive-course-accent);
-  font-family: var(--mono);
-  text-align: center;
-}
-
-.archive-chain__coordinate strong {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.055em;
-  white-space: nowrap;
-}
-
-.archive-chain__coordinate span {
-  color: var(--home-text-muted);
-  font-size: 6px;
-  font-weight: 500;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .archive-chain__list {
@@ -2231,19 +2186,6 @@ html[data-theme='dark'] .archive-voyage__image--night.archive-voyage__image--foc
   .archive-chain::before {
     left: 34px;
     transform: none;
-  }
-
-  .archive-chain__chapter {
-    grid-template-columns: 68px minmax(0, 1fr);
-    margin-left: -68px;
-  }
-
-  .archive-chain__coordinate {
-    width: 58px;
-    min-height: 44px;
-    grid-column: 1;
-    grid-row: 1;
-    padding-inline: 4px;
   }
 
   .archive-chain__item {

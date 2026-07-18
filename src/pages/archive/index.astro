@@ -76,14 +76,8 @@ for (const entry of allEntries) {
         {
           allEntries.length > 0 ? (
             <div class="archive-chain archive-chain--blog" data-archive-course>
-              {Object.entries(grouped).map(([month, entries], monthIndex) => (
-                <section class="archive-chain__month">
-                  <header class="archive-chain__chapter">
-                    <h3 class="archive-chain__coordinate">
-                      <strong>{month.replace('-', '.')}</strong>
-                      <span>LOG {String(monthIndex + 1).padStart(2, '0')}</span>
-                    </h3>
-                  </header>
+              {Object.values(grouped).map((entries) => (
+                <div class="archive-chain__month">
                   <ol class="archive-chain__list">
                     {entries.map((entry) => (
                       <li class="archive-chain__item reveal">
@@ -110,7 +104,7 @@ for (const entry of allEntries) {
                       </li>
                     ))}
                   </ol>
-                </section>
+                </div>
               ))}
               <span class="archive-chain__end" aria-hidden="true">
                 Present
@@ -138,13 +132,7 @@ for (const entry of allEntries) {
         </header>
 
         <div class="archive-chain archive-chain--personal" data-archive-course>
-          <section class="archive-chain__month">
-            <header class="archive-chain__chapter">
-              <h3 class="archive-chain__coordinate">
-                <strong>2024 — NOW</strong>
-                <span>ONGOING</span>
-              </h3>
-            </header>
+          <div class="archive-chain__month">
             <ol class="archive-chain__list">
               {
                 personalTimeline.map((entry) => (
@@ -171,7 +159,7 @@ for (const entry of allEntries) {
                 ))
               }
             </ol>
-          </section>
+          </div>
           <span class="archive-chain__end" aria-hidden="true">Present</span>
         </div>
       </section>
