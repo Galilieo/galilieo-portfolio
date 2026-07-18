@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import dayVoyage from '../../assets/images/archive/archive-voyage-day.png';
+import nightVoyage from '../../assets/images/archive/archive-voyage-night.png';
+---
+
+<section class="archive-voyage" data-archive-voyage aria-labelledby="archive-voyage-title">
+  <div class="archive-voyage__transition" aria-hidden="true">
+    <span class="archive-voyage__line"></span>
+    <span class="archive-voyage__lights"><i></i><i></i><i></i><i></i><i></i></span>
+    <span class="archive-voyage__ripples"></span>
+  </div>
+
+  <div class="archive-voyage__scene">
+    <div class="archive-voyage__media" aria-hidden="true">
+      <Image
+        class="archive-voyage__image archive-voyage__image--day archive-voyage__image--base"
+        data-archive-voyage-day
+        src={dayVoyage}
+        alt=""
+        widths={[720, 1180, 1440]}
+        sizes="(max-width: 1180px) 100vw, 1180px"
+        loading="lazy"
+      />
+      <Image
+        class="archive-voyage__image archive-voyage__image--day archive-voyage__image--focus"
+        src={dayVoyage}
+        alt=""
+        widths={[720, 1180, 1440]}
+        sizes="(max-width: 1180px) 100vw, 1180px"
+        loading="lazy"
+      />
+      <Image
+        class="archive-voyage__image archive-voyage__image--night archive-voyage__image--base"
+        data-archive-voyage-night
+        src={nightVoyage}
+        alt=""
+        widths={[720, 1180, 1440]}
+        sizes="(max-width: 1180px) 100vw, 1180px"
+        loading="lazy"
+      />
+      <Image
+        class="archive-voyage__image archive-voyage__image--night archive-voyage__image--focus"
+        src={nightVoyage}
+        alt=""
+        widths={[720, 1180, 1440]}
+        sizes="(max-width: 1180px) 100vw, 1180px"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="archive-voyage__copy">
+      <p>Continue the voyage</p>
+      <h2 id="archive-voyage-title">下一段，仍在航行</h2>
+      <span>只留下一个轻量的视觉句号，不把归档页变成第二个首页。</span>
+    </div>
+    <span class="archive-voyage__glint" aria-hidden="true"></span>
+  </div>
+</section>
