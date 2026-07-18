@@ -43,7 +43,8 @@ export function checkStudioIsolation(distRoot = resolve(process.cwd(), 'dist')) 
   return leaks;
 }
 
-const executedDirectly = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+const executedDirectly =
+  process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (executedDirectly) {
   try {
     checkStudioIsolation();

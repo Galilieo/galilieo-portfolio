@@ -5,12 +5,14 @@ import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const checks = [
+  { name: 'Prettier', script: 'format:check' },
   { name: 'ESLint', script: 'lint' },
   { name: 'Astro check', script: 'check' },
   { name: 'Astro build', script: 'build' },
+  { name: 'Site identity and shell contracts', script: 'check:site' },
   { name: 'Blog navigation structure', script: 'check:blog' },
   { name: 'Homepage structure', script: 'check:home' },
-  { name: 'Studio unit tests', script: 'test:studio' },
+  { name: 'Node tests', script: 'test' },
   { name: 'Studio isolation check', script: 'check:studio' },
 ];
 
@@ -63,5 +65,5 @@ for (const [index, check] of checks.entries()) {
 }
 
 console.log(
-  '\nVerification passed: lint, Astro check, build, blog/home contracts, Studio tests, and production isolation completed successfully.',
+  '\nVerification passed: formatting, lint, Astro check, build, blog/home contracts, Node tests, and production isolation completed successfully.',
 );

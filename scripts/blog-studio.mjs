@@ -5,7 +5,11 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createBlogStudioServer, DEFAULT_PORT } from './lib/blog-studio-server.mjs';
-import { findAvailablePort, resolveAstroPreview, startAstroDev } from './lib/blog-studio-runtime.mjs';
+import {
+  findAvailablePort,
+  resolveAstroPreview,
+  startAstroDev,
+} from './lib/blog-studio-runtime.mjs';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 

@@ -149,7 +149,10 @@ export function validateBlogFrontmatter(data) {
   if (!Number.isInteger(data.order) || data.order < 0) {
     errors.push({ field: 'order', message: 'order 必须是非负整数' });
   }
-  if (data.readingTime !== undefined && (!Number.isInteger(data.readingTime) || data.readingTime <= 0)) {
+  if (
+    data.readingTime !== undefined &&
+    (!Number.isInteger(data.readingTime) || data.readingTime <= 0)
+  ) {
     errors.push({ field: 'readingTime', message: 'readingTime 必须是正整数' });
   }
 

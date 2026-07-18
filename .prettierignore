@@ -4,5 +4,9 @@ dist/
 pnpm-lock.yaml
 src/assets/svg/
 public/images/
+docs/assets/
+sketches/
 sketches/research/raw-web-captures/
 sketches/**/*.png
+src/content/
+tasks/

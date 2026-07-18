@@ -85,11 +85,17 @@ describe('frontmatter parsing and serialization', () => {
   });
 
   test('rejects unsupported YAML syntax instead of silently deleting it', () => {
-    assert.throws(() => parseFrontmatter("---\ntitle: 'A'\n  invalid\n---\n"), /unsupported syntax/);
+    assert.throws(
+      () => parseFrontmatter("---\ntitle: 'A'\n  invalid\n---\n"),
+      /unsupported syntax/,
+    );
   });
 
   test('refuses to serialize unknown fields', () => {
-    assert.throws(() => serializeFrontmatter({ ...published, futureField: 'value' }), /unsupported fields/);
+    assert.throws(
+      () => serializeFrontmatter({ ...published, futureField: 'value' }),
+      /unsupported fields/,
+    );
   });
 });
 
@@ -148,7 +154,10 @@ describe('file operations', () => {
     await atomicSave(path, 'first');
     await atomicSave(path, 'second');
     assert.equal(readFileSync(path, 'utf8'), 'second');
-    assert.deepEqual(readdirSync(temporaryRoot).filter((name) => name.startsWith('.blog-studio-')), []);
+    assert.deepEqual(
+      readdirSync(temporaryRoot).filter((name) => name.startsWith('.blog-studio-')),
+      [],
+    );
   });
 
   test('writes binary cover data', async () => {

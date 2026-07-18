@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.11.0",
+  "engines": {
+    "node": ">=24.16.0 <25"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -12,10 +15,14 @@
     "lint": "eslint .",
     "check:blog": "node scripts/check-blog-navigation.mjs",
     "check:home": "node scripts/check-home-structure.mjs",
+    "check:site": "node scripts/check-site-contracts.mjs",
     "sync:music": "node scripts/sync-netease-playlist.mjs 18145116776",
     "verify": "node scripts/verify.mjs",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "studio": "node scripts/blog-studio.mjs",
+    "test": "node --test",
+    "test:music": "node --test tests/music-playback.test.mjs",
     "test:studio": "node --test tests/blog-studio/*.test.mjs",
     "check:studio": "node scripts/check-studio-isolation.mjs"
   },

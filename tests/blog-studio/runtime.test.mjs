@@ -7,7 +7,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, test } from 'node:test';
 
-import { findAvailablePort, resolveAstroPreview, startAstroDev } from '../../scripts/lib/blog-studio-runtime.mjs';
+import {
+  findAvailablePort,
+  resolveAstroPreview,
+  startAstroDev,
+} from '../../scripts/lib/blog-studio-runtime.mjs';
 
 describe('findAvailablePort', () => {
   test('returns a port number at or above the start port', async () => {
@@ -60,10 +64,13 @@ describe('resolveAstroPreview', () => {
     const astroPort = probe.address().port;
     const astroOrigin = `http://127.0.0.1:${astroPort}`;
 
-    writeFileSync(join(dir, '.astro', 'dev.json'), JSON.stringify({
-      port: astroPort,
-      url: astroOrigin,
-    }));
+    writeFileSync(
+      join(dir, '.astro', 'dev.json'),
+      JSON.stringify({
+        port: astroPort,
+        url: astroOrigin,
+      }),
+    );
 
     try {
       const origin = await resolveAstroPreview(dir);
@@ -77,10 +84,13 @@ describe('resolveAstroPreview', () => {
   test('returns null when dev.json URL is non-loopback', async () => {
     const dir = join(tmpdir(), `galilieo-runtime-${Date.now()}`);
     mkdirSync(join(dir, '.astro'), { recursive: true });
-    writeFileSync(join(dir, '.astro', 'dev.json'), JSON.stringify({
-      port: 4321,
-      url: 'http://192.168.1.1:4321',
-    }));
+    writeFileSync(
+      join(dir, '.astro', 'dev.json'),
+      JSON.stringify({
+        port: 4321,
+        url: 'http://192.168.1.1:4321',
+      }),
+    );
     try {
       const origin = await resolveAstroPreview(dir);
       assert.equal(origin, null);
@@ -92,10 +102,13 @@ describe('resolveAstroPreview', () => {
   test('returns null when dev.json server is unreachable', async () => {
     const dir = join(tmpdir(), `galilieo-runtime-${Date.now()}`);
     mkdirSync(join(dir, '.astro'), { recursive: true });
-    writeFileSync(join(dir, '.astro', 'dev.json'), JSON.stringify({
-      port: 19999,
-      url: 'http://127.0.0.1:19999',
-    }));
+    writeFileSync(
+      join(dir, '.astro', 'dev.json'),
+      JSON.stringify({
+        port: 19999,
+        url: 'http://127.0.0.1:19999',
+      }),
+    );
     try {
       const origin = await resolveAstroPreview(dir);
       assert.equal(origin, null);
@@ -115,10 +128,13 @@ describe('resolveAstroPreview', () => {
     await new Promise((resolve) => probe.listen(0, '127.0.0.1', resolve));
     const astroPort = probe.address().port;
 
-    writeFileSync(join(dir, '.astro', 'dev.json'), JSON.stringify({
-      port: astroPort,
-      url: `http://localhost:${astroPort}`,
-    }));
+    writeFileSync(
+      join(dir, '.astro', 'dev.json'),
+      JSON.stringify({
+        port: astroPort,
+        url: `http://localhost:${astroPort}`,
+      }),
+    );
 
     try {
       const origin = await resolveAstroPreview(dir);
@@ -135,14 +151,17 @@ describe('startAstroDev', () => {
     const repoRoot = join(tmpdir(), `galilieo-runtime-astro-${Date.now()}`);
     const cliDirectory = join(repoRoot, 'node_modules', 'astro', 'bin');
     mkdirSync(cliDirectory, { recursive: true });
-    writeFileSync(join(cliDirectory, 'astro.mjs'), `
+    writeFileSync(
+      join(cliDirectory, 'astro.mjs'),
+      `
       import http from 'node:http';
       const host = process.argv[process.argv.indexOf('--host') + 1];
       const port = Number(process.argv[process.argv.indexOf('--port') + 1]);
       const server = http.createServer((_request, response) => response.end('preview'));
       server.listen(port, host);
       process.on('SIGTERM', () => server.close(() => process.exit(0)));
-    `);
+    `,
+    );
 
     let result = null;
     try {
