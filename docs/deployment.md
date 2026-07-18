@@ -4,7 +4,7 @@
 
 ## 环境要求
 
-- Node.js 22.12+（当前 Astro 7 依赖要求）
+- Node.js 24.16+（同时满足当前 Astro、ESLint 与插件依赖要求）
 - pnpm 11.11.0（见 `package.json#packageManager`）
 - 构建机可安装 lockfile 中依赖；服务器只需要 Nginx 和静态文件
 
@@ -23,6 +23,8 @@ pnpm install --frozen-lockfile
 pnpm run verify
 pnpm run preview
 ```
+
+`verify` 与 GitHub Actions 使用同一条质量链路：格式检查、lint、Astro check、静态构建、结构契约、Node 测试和 Studio 生产隔离检查。CI 使用 `pnpm install --frozen-lockfile`，不在验证时改写依赖解析。
 
 构建成功后产物位于 `dist/`。只发布该目录的内容，不上传源码、`node_modules`、`.env` 或本地工具文件。`preview` 默认用于本地抽查，不是生产服务器。
 
@@ -59,14 +61,12 @@ error_page 404 /404.html;
 
 ## 域名与 HTTPS
 
-当前站点 URL 同时出现在：
+`src/config/site.ts` 的 `siteConfig.url` 是代码中的唯一正式站点 URL 来源；Astro 配置、页面 canonical、结构化数据和 RSS 都从这里读取。以下静态 Adapter 仍保存可直接部署或抓取的镜像值：
 
-- `astro.config.mjs`
-- `src/config/site.ts`
 - `public/robots.txt`
 - `nginx.conf.example`
 
-域名变更必须由用户明确要求，并同步检查 canonical、Open Graph、RSS、sitemap、robots、Nginx `server_name` 和证书。DNS 至少配置指向服务器的 A 记录；使用 IPv6 时再配置 AAAA。
+`pnpm run check:site` 会核对 Astro 配置、生成页面 canonical、robots sitemap 和 Nginx `server_name` 是否与 `siteConfig.url` 一致。域名变更仍必须由用户明确要求，并同步检查证书与 DNS；DNS 至少配置指向服务器的 A 记录，使用 IPv6 时再配置 AAAA。
 
 HTTPS 可由现有证书管理方案或 Certbot 配置。不要在文档中保存账户凭据或私钥。签发/续期后检查 HTTP 到 HTTPS 的跳转、证书域名、有效期和自动续期。
 
@@ -102,12 +102,12 @@ curl -I https://galilieo.heart-island.cn/not-a-real-page
 
 ## 常见问题
 
-- **安装失败或版本不支持**：核对 Node.js 是否至少 22.12、pnpm 是否为 11.11.0。
+- **安装失败或版本不支持**：核对 Node.js 是否为 24.16+ 且低于 25、pnpm 是否为 11.11.0。
 - **build 因内容报错**：按 `src/content.config.ts` 检查必填字段、日期格式、URL、布尔值和 `order`。
 - **文章没有生成**：确认 `draft: false` 且填写 `publishedAt`。
 - **线上能打开 Studio/Admin**：立即停止发布并检查上传源是否误用了仓库根目录；生产只能同步 `dist/`，正常构建不包含本地 Studio。
 - **刷新详情页得到首页**：移除 SPA fallback，使用 `$uri $uri/ =404`。
 - **真实详情页 404**：确认上传时保留 Astro `directory` 构建的目录与其中 `index.html`。
 - **样式或脚本仍是旧版**：检查 CDN/浏览器缓存策略与上传结果；不要只重载 Nginx 来代替更新文件。
-- **RSS 或 canonical 域名错误**：同步检查四处站点 URL 配置后重新构建。
+- **RSS 或 canonical 域名错误**：检查 `siteConfig.url` 和 `pnpm run check:site` 输出；robots 与 Nginx 静态 Adapter 仍需保持一致。
 - **资源 404 或 MIME 错误**：核对 Nginx root、静态文件是否完整、`mime.types` 与示例中的额外类型。

@@ -1,7 +1,7 @@
 # Galilieo Atlas 内页视觉设计
 
-- 状态：整体方向已批准，页面细节待最终审批
-- 更新日期：2026-07-13
+- 状态：生产实现已完成并验收；后续修改遵守本文不变量
+- 更新日期：2026-07-18
 - 范围：项目、博客、归档、关于，以及项目/文章详情的一致性
 - 参考站点：[XingHuiSama の 宝藏之地](https://www.xinghuisama.top/)
 - 参考仓库：[heiehiehi/XinghuisamaBlogs](https://github.com/heiehiehi/XinghuisamaBlogs)
@@ -22,7 +22,7 @@ XingHuiSama 仓库当前使用 Next.js、React、Tailwind、Framer Motion 和 Th
 不得复制：
 
 - 上游图片、头像、动漫素材、字体组合、精确色值、Tailwind 类和 React 组件。
-- 搜索、播放器、评论、弹幕、宠物、悬浮工具、卡片/时间线切换等当前没有真实需求的功能。
+- 搜索、评论、弹幕、宠物等没有真实需求的功能；现有全站音乐播放器和归档 Tabs 是本站独立实现，不属于参考站复制范围。
 - 虚构项目、文章、统计、活动记录或个人事实。
 
 ## 参考截图

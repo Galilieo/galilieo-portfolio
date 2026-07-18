@@ -4,7 +4,7 @@
 
 ## 修改个人信息
 
-统一配置在 `src/config/site.ts`：
+统一配置在 `src/config/site.ts`；它也是正式站点 URL 与公开身份的唯一代码来源：
 
 - `name`、`title`、`description`、`url`：站点和全局 SEO
 - `email`、`qqEmail`、`github`、`heartIsland`：联系入口与外链
@@ -19,7 +19,7 @@
 
 个人成长节点集中在 `src/data/personal-timeline.ts`，由归档页“个人轨迹”视图读取；About 只保留头像、身份、详细介绍、事实和入口，不再维护第二份时间线。`/campus/` 是在校经历页，只展示已经确认的学习主线和真实项目；课程、比赛、社团、奖项或证书必须获得真实信息后才能补充。
 
-首页音乐清单位于 `src/data/music.ts`，不要手工维护歌曲元数据。更新网易云歌单后运行 `pnpm run sync:music`，脚本会读取歌单 `18145116776`、检测站外播放可用性并重写静态清单；构建与访客访问页面时不请求网易云元数据接口。
+首页音乐清单位于 `src/data/music.ts`，不要手工维护歌曲元数据。更新网易云歌单后运行 `pnpm run sync:music`，CLI Adapter 会读取歌单 `18145116776`、检测站外播放可用性，并通过 `scripts/lib/music-snapshot.mjs` 生成稳定静态清单；无法提供站外音频的曲目仍保留在歌单中，但播放按钮禁用。构建与访客访问页面时不请求网易云元数据接口。
 
 博客列表与首页“精选文章”共用同一个封面选择器：优先使用文章 frontmatter 的 `cover`；没有独立封面时，根据文章 slug 从 `src/assets/images/covers/` 的已批准图库中稳定选择一张。同一文章在所有入口始终使用同一图库图片，不随刷新、分类顺序或构建顺序变化。新增公开素材前必须确认来源和公开使用范围。
 
@@ -112,7 +112,7 @@ homepageState: 已发布
 - `tags` 是辅助主题词，公开文章保留 2–3 个主要 Tag；博客目录切到 Tags 时，右侧改为按发布日期排序的统一 Tag 结果流，标题显示选中的 Tag 与总数，文章卡内部继续显示真实 Category。切回 Category 时恢复分类分组。无 JavaScript 时只输出 Category 主内容流，所有文章仍完整可访问。
 - 正文使用连续、清晰的 H2/H3 层级生成文章目录，不跳级，也不使用标题只做视觉加粗。
 
-公开文章会进入 `/notes/`、`/blog/`、文章详情、首页 Selected Writing 轮播、归档页“博客笔记”时间线、RSS 和 sitemap。归档页使用原生 Tabs 在博客笔记与个人轨迹之间切换；无 JavaScript 时两套时间线都完整显示。草稿不会生成公开详情页，也不会进入首页、归档、RSS 或 sitemap。
+公开文章由 `src/lib/blog-directory.ts` 的 `getPublishedBlogArticles()` 统一选择，会进入 `/notes/`、`/blog/`、文章详情、首页 Selected Writing 轮播、归档页“博客笔记”时间线、RSS 和 sitemap。归档页使用原生 Tabs 在博客笔记与个人轨迹之间切换；无 JavaScript 时两套时间线都完整显示。开发环境允许单独预览草稿，生产构建不会生成草稿详情，草稿也不会进入首页、归档、RSS 或 sitemap。
 
 ## Markdown 与 MDX
 
@@ -148,6 +148,6 @@ cover: ../../assets/images/projects/my-project.jpg
 
 1. 区分当前能力、正在开发和未来计划；删除未验证成果或敏感实习信息。
 2. 检查标题、摘要、标签、日期、`draft`、`order`、`homepageState` 和链接。
-3. 运行 `pnpm run verify`（依次执行 lint、Astro check 和 build）。
+3. 运行 `pnpm run verify`（依次执行格式、lint、Astro check、build、站点契约、Node 测试和 Studio 生产隔离检查）。
 4. 用 `pnpm run preview` 检查首页、列表页、详情页和移动端阅读。
 5. 公开文章额外检查 `/rss.xml` 和生成的 sitemap；检查不存在路径确实显示 404。
