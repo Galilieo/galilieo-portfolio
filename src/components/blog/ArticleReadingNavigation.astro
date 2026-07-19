@@ -14,52 +14,52 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
 ---
 
 {
-  variant === 'desktop' ? (
-    <aside
-      class="article-reading-navigation article-reading-navigation--desktop"
-      aria-label="文章阅读辅助"
-      data-reading-navigation
-    >
-      <ArticleRecommendations articles={recommendations} variant="desktop" />
-      {tocHeadings.length > 0 && (
-        <nav class="article-toc" aria-label="本文目录">
-          <p>本文目录</p>
-          <ol>
-            {tocHeadings.map((heading) => (
-              <li class:list={{ 'is-depth-three': heading.depth === 3 }}>
-                <a href={`#${heading.slug}`} data-reading-toc-link>
-                  {heading.text}
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
-    </aside>
-  ) : (
-    tocHeadings.length > 0 && (
-      <details
-        class="article-reading-navigation article-reading-navigation--mobile"
-        data-reading-navigation
-      >
-        <summary>
-          <span>本文目录</span>
-          <span>{tocHeadings.length} 节</span>
-        </summary>
-        <div class="article-reading-navigation__body">
-          <nav class="article-toc" aria-label="移动端本文目录">
-            <ol>
-              {tocHeadings.map((heading) => (
-                <li class:list={{ 'is-depth-three': heading.depth === 3 }}>
-                  <a href={`#${heading.slug}`} data-reading-toc-link>
-                    {heading.text}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        </div>
-      </details>
-    )
-  )
+  variant === 'desktop'
+    ? (tocHeadings.length > 0 || recommendations.length > 0) && (
+        <aside
+          class="article-reading-navigation article-reading-navigation--desktop"
+          aria-label="文章阅读辅助"
+          data-reading-navigation
+        >
+          <ArticleRecommendations articles={recommendations} variant="desktop" />
+          {tocHeadings.length > 0 && (
+            <nav class="article-toc" aria-label="本文目录">
+              <p>本文目录</p>
+              <ol>
+                {tocHeadings.map((heading) => (
+                  <li class:list={{ 'is-depth-three': heading.depth === 3 }}>
+                    <a href={`#${heading.slug}`} data-reading-toc-link>
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
+        </aside>
+      )
+    : tocHeadings.length > 0 && (
+        <details
+          class="article-reading-navigation article-reading-navigation--mobile"
+          data-reading-navigation
+        >
+          <summary>
+            <span>本文目录</span>
+            <span>{tocHeadings.length} 节</span>
+          </summary>
+          <div class="article-reading-navigation__body">
+            <nav class="article-toc" aria-label="移动端本文目录">
+              <ol>
+                {tocHeadings.map((heading) => (
+                  <li class:list={{ 'is-depth-three': heading.depth === 3 }}>
+                    <a href={`#${heading.slug}`} data-reading-toc-link>
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </div>
+        </details>
+      )
 }
