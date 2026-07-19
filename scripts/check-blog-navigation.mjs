@@ -20,6 +20,14 @@ await runGeneratedSiteContract({
       return markup.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1] ?? '';
     }
 
+    function markedBlock(html, tagName, marker) {
+      return (
+        html.match(
+          new RegExp(`<${tagName}\\b[^>]*${marker}[^>]*>[\\s\\S]*?<\\/${tagName}>`),
+        )?.[0] ?? ''
+      );
+    }
+
     function categorySignature(html) {
       return tagsWithMarker(html, 'section', 'data-blog-category-section').map((section) => ({
         id: attribute(section, 'id'),
@@ -62,8 +70,9 @@ await runGeneratedSiteContract({
         continue;
       }
 
+      const body = markedBlock(html, 'div', 'data-article-body');
       const headingIds = new Set(
-        [...html.matchAll(/<h[23]\b[^>]*\bid="([^"]+)"[^>]*>/g)].map((match) => match[1]),
+        [...body.matchAll(/<h[23]\b[^>]*\bid="([^"]+)"[^>]*>/g)].map((match) => match[1]),
       );
       const tocTargets = new Set(
         tagsWithMarker(html, 'a', 'data-reading-toc-link')
@@ -88,9 +97,55 @@ await runGeneratedSiteContract({
         if (!headingIds.has(id)) failures.push(`/notes/${slug}/ links to missing heading #${id}.`);
       }
 
-      const categoryLink = tagsWithMarker(html, 'a', 'data-current-category-link')[0] ?? '';
-      if (!attribute(categoryLink, 'href').startsWith('/notes/#category-')) {
-        failures.push(`/notes/${slug}/ must link back to its Category section.`);
+      const hero = tagsWithMarker(html, 'section', 'data-article-hero')[0] ?? '';
+      const cover = markedBlock(html, 'div', 'data-article-cover');
+      const backLink = tagsWithMarker(html, 'a', 'data-article-back-link')[0] ?? '';
+      const desktopRecommendations = markedBlock(
+        html,
+        'section',
+        'data-article-recommendations="desktop"',
+      );
+      const mobileRecommendations = markedBlock(
+        html,
+        'section',
+        'data-article-recommendations="mobile"',
+      );
+      const desktopRecommendationCount = tagsWithMarker(
+        desktopRecommendations,
+        'a',
+        'data-article-recommendation-link',
+      ).length;
+      const mobileRecommendationCount = tagsWithMarker(
+        mobileRecommendations,
+        'a',
+        'data-article-recommendation-link',
+      ).length;
+
+      if (!hero) failures.push(`/notes/${slug}/ must render the article hero.`);
+      if (!cover || !cover.includes('<img')) {
+        failures.push(`/notes/${slug}/ must render an optimized article cover.`);
+      }
+      if (!body) failures.push(`/notes/${slug}/ must mark the server-rendered article body.`);
+      if (/class="[^"]*\\bprose\\b[^"]*\\breveal\\b/.test(html)) {
+        failures.push(`/notes/${slug}/ must not gate the whole article body behind Reveal.`);
+      }
+      if (attribute(backLink, 'href') !== '/notes/') {
+        failures.push(`/notes/${slug}/ must provide a stable back link to /notes/.`);
+      }
+      if (desktopRecommendationCount === 0 || desktopRecommendationCount > 3) {
+        failures.push(`/notes/${slug}/ desktop Recommended must contain 1–3 articles.`);
+      }
+      if (mobileRecommendationCount === 0 || mobileRecommendationCount > 2) {
+        failures.push(`/notes/${slug}/ mobile Recommended must contain 1–2 articles.`);
+      }
+      for (const recommendationLink of tagsWithMarker(
+        `${desktopRecommendations}${mobileRecommendations}`,
+        'a',
+        'data-article-recommendation-link',
+      )) {
+        if (attribute(recommendationLink, 'href') === `/notes/${slug}/`) {
+          failures.push(`/notes/${slug}/ must not recommend itself.`);
+        }
       }
     }
 
