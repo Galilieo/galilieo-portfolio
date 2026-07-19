@@ -32,6 +32,11 @@
 - Reduced Motion：推荐 transition property 与 transform 均为 `none`，Hero 和全文可读。禁用 JavaScript 时 Hero、标题、全文、原生目录、文章导航、2 条推荐和普通返回链接均可见；正文没有 `reveal` class。最长文章位于排序边界，因此文章导航按数据只显示 1 条有效上一篇链接。
 - 短文章推荐区完整且无空布局；Heart Island 项目正文 Reveal 后可见，原有顶部间距为 81.92px，未被文章选择器覆盖。桌面与平板键盘路径均覆盖稳定返回、可用的前后篇、可见推荐；平板额外覆盖原生目录 summary，隐藏的桌面/移动重复版本未进入焦点顺序。
 - 代表性页面在桌面与移动端共 12 次路由扫描均无横向溢出；未发现 page error、同源失败请求或同源资源 404。受沙箱网络限制，Google Fonts、GitHub、IP/天气和网易云外部请求使用站点既有回退，不构成本次文章详情发布阻塞。
+- 390×844 移动端菜单复核通过：关闭态设置 `inert` 且导航链接不进入 Tab 顺序；指针点击、外部点击、Enter 打开并聚焦首项、Escape 关闭并归还焦点、点击 Projects 后跨页关闭与 active 状态均正确。无 JavaScript 时静态导航可见且可聚焦，但本次运行未能可靠确认菜单按钮的计算隐藏状态，作为非阻塞未验证项记录。
+- 404 在 1440×1000 浅色与 390×844 深色下均返回 HTTP 404，页头、主标题、说明、返回首页入口与页尾完整可见，无横向溢出；截图人工检查确认桌面和移动版布局、主题与可读性正常。
+- 首页、代表文章和 404 的 title、description、canonical、Open Graph URL、Twitter card/title/description/image 均与页面数据和正式域名契约一致，Twitter 图片的同源镜像返回 200。GitHub、Heart Island、网易云、邮件及站内关键链接的 href、可访问名称和外链 `target`/`rel` 已核对；远端可达性受沙箱网络限制，作为非阻塞未验证项记录。
+- Astro 客户端路由按首页 → 博客 → 项目 → 归档 → 首页完成 4 次切换，逐次收到 4 个 `astro:before-swap`、`astro:after-swap` 与 `astro:page-load`；持久化全局控件和 audio 保持同一 DOM 节点，页头/导航/全局控件均仅一份，主题按钮连续两次点击只各切换一次，两组首页轮播均保持单一 active slide/current dot。
+- Heart Island 运行时 SVG/CSS 动画、指针效果和 Reduced Motion 未在当前构建中执行：现有首页内容命中 cover 优先分支，只渲染封面图而未产生 `.island-scene` SVG 节点。这是本次文章详情范围外的既有渲染状态，明确作为非阻塞未验证项，不据此宣称动画已通过。
 
 ## 完成条件
 
