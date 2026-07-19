@@ -110,9 +110,10 @@
   color: var(--home-text);
   background: linear-gradient(
     150deg,
-    color-mix(in srgb, var(--home-panel-highlight) 40%, var(--home-surface-strong)),
-    color-mix(in srgb, var(--home-surface-strong) 96%, transparent)
+    color-mix(in srgb, var(--home-panel-highlight) 28%, var(--music-panel-surface-strong)),
+    var(--music-panel-surface)
   );
+  background-clip: padding-box;
   box-shadow: 0 24px 70px rgba(5, 11, 23, 0.28);
   opacity: 0;
   visibility: hidden;
@@ -125,6 +126,12 @@
     transform 180ms var(--ease);
   backdrop-filter: blur(22px) saturate(1.2);
   -webkit-backdrop-filter: blur(22px) saturate(1.2);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .global-music__panel {
+    background: var(--music-panel-surface-strong);
+  }
 }
 
 .global-music[data-open='true'] .global-music__panel {

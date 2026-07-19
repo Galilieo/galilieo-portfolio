@@ -34,6 +34,8 @@
   --home-panel-highlight: rgba(255, 255, 255, 0.6);
   --home-panel-blur: 14px;
   --home-panel-saturation: 112%;
+  --music-panel-surface: rgba(248, 248, 245, 0.82);
+  --music-panel-surface-strong: rgba(255, 255, 255, 0.9);
   --home-text: #182235;
   --home-text-secondary: #5e6978;
   --home-text-muted: #616d7b;
@@ -136,6 +138,8 @@ html[data-theme='dark'] {
   --home-panel-highlight: rgba(194, 214, 247, 0.22);
   --home-panel-blur: 18px;
   --home-panel-saturation: 116%;
+  --music-panel-surface: rgba(10, 25, 43, 0.78);
+  --music-panel-surface-strong: rgba(15, 32, 54, 0.88);
   --home-text: #eef3fc;
   --home-text-secondary: #a5b0c2;
   --home-text-muted: #7f8da3;
