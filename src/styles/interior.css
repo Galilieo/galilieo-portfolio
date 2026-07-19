@@ -92,7 +92,9 @@ body:has(.interior-page) {
 
 .blog-category-directory,
 .blog-directory-navigation,
-.article-reading-navigation {
+.article-reading-navigation--mobile,
+.article-recommendations--desktop,
+.article-reading-navigation--desktop > .article-toc {
   border: 1px solid var(--interior-border);
   background: color-mix(in srgb, var(--interior-surface) 82%, transparent);
   box-shadow: var(--interior-shadow);
@@ -2048,10 +2050,23 @@ html[data-theme='dark'] .archive-voyage__image--night.archive-voyage__image--foc
 }
 
 .article-reading-navigation--desktop {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.article-recommendations--desktop {
+  padding: 18px;
+  border-radius: 20px;
+}
+
+.article-reading-navigation--desktop > .article-toc {
   position: sticky;
   top: 88px;
   max-height: calc(100svh - 112px);
   overflow-y: auto;
+  margin-top: 0;
   padding: 18px;
   border-radius: 20px;
 }

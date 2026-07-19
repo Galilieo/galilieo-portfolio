@@ -1,5 +1,6 @@
 import { readdirSync } from 'node:fs';
 import { siteConfig } from '../src/config/site.ts';
+import { checkGeneratedArticle } from './lib/blog-article-contract.mjs';
 import { runGeneratedSiteContract } from './lib/generated-site-contract.mjs';
 
 await runGeneratedSiteContract({
@@ -18,35 +19,6 @@ await runGeneratedSiteContract({
 
     function attribute(markup, name) {
       return markup.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1] ?? '';
-    }
-
-    function markedBlock(html, tagName, marker) {
-      const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const escapedTagName = escapeRegExp(tagName);
-      const escapedMarker = escapeRegExp(marker);
-      const openingMatch = new RegExp(`<${escapedTagName}\\b[^>]*${escapedMarker}[^>]*>`).exec(
-        html,
-      );
-
-      if (!openingMatch || /\/\s*>$/.test(openingMatch[0])) return '';
-
-      const tagExpression = new RegExp(`<\\/?${escapedTagName}\\b[^>]*>`, 'g');
-      tagExpression.lastIndex = openingMatch.index;
-      let depth = 0;
-      let tagMatch;
-
-      while ((tagMatch = tagExpression.exec(html))) {
-        const tag = tagMatch[0];
-        if (tag.startsWith('</')) {
-          depth -= 1;
-          if (depth === 0) return html.slice(openingMatch.index, tagExpression.lastIndex);
-          if (depth < 0) return '';
-        } else if (!/\/\s*>$/.test(tag)) {
-          depth += 1;
-        }
-      }
-
-      return '';
     }
 
     function categorySignature(html) {
@@ -86,101 +58,7 @@ await runGeneratedSiteContract({
 
     for (const slug of articleDirectories) {
       const html = readPage('notes', slug, 'index.html');
-      const hasReadingNavigation = html.includes('data-reading-navigation');
-      if (!hasReadingNavigation) {
-        failures.push(`/notes/${slug}/ must render reading navigation.`);
-      }
-
-      const bodyOpening = tagsWithMarker(html, 'div', 'data-article-body')[0] ?? '';
-      const body = markedBlock(html, 'div', 'data-article-body');
-      const bodyClasses = new Set(attribute(bodyOpening, 'class').split(/\s+/).filter(Boolean));
-      const headingIds = new Set(
-        [...body.matchAll(/<h[23]\b[^>]*\bid="([^"]+)"[^>]*>/g)].map((match) => match[1]),
-      );
-
-      if (html.includes('data-reading-tab') || html.includes('data-reading-panel')) {
-        failures.push(
-          `/notes/${slug}/ must not render the removed mobile Category / article tabs.`,
-        );
-      }
-
-      if (hasReadingNavigation) {
-        const tocTargets = new Set(
-          tagsWithMarker(html, 'a', 'data-reading-toc-link')
-            .map((link) => attribute(link, 'href'))
-            .filter((href) => href.startsWith('#'))
-            .map((href) => href.slice(1)),
-        );
-
-        if (headingIds.size > 0 && !html.includes('article-reading-navigation--mobile')) {
-          failures.push(`/notes/${slug}/ must render a native mobile article TOC.`);
-        }
-
-        for (const id of headingIds) {
-          if (!tocTargets.has(id)) failures.push(`/notes/${slug}/ is missing TOC target #${id}.`);
-        }
-        for (const id of tocTargets) {
-          if (!headingIds.has(id))
-            failures.push(`/notes/${slug}/ links to missing heading #${id}.`);
-        }
-      }
-
-      const hero = tagsWithMarker(html, 'section', 'data-article-hero')[0] ?? '';
-      const cover = markedBlock(html, 'div', 'data-article-cover');
-      const coverImage = cover.match(/<img\b[^>]*>/)?.[0] ?? '';
-      const hasOptimizedCover =
-        coverImage &&
-        ['srcset', 'sizes', 'width', 'height'].every(
-          (name) => attribute(coverImage, name).trim() !== '',
-        );
-      const backLink = tagsWithMarker(html, 'a', 'data-article-back-link')[0] ?? '';
-      const desktopRecommendations = markedBlock(
-        html,
-        'section',
-        'data-article-recommendations="desktop"',
-      );
-      const mobileRecommendations = markedBlock(
-        html,
-        'section',
-        'data-article-recommendations="mobile"',
-      );
-      const desktopRecommendationCount = tagsWithMarker(
-        desktopRecommendations,
-        'a',
-        'data-article-recommendation-link',
-      ).length;
-      const mobileRecommendationCount = tagsWithMarker(
-        mobileRecommendations,
-        'a',
-        'data-article-recommendation-link',
-      ).length;
-
-      if (!hero) failures.push(`/notes/${slug}/ must render the article hero.`);
-      if (!hasOptimizedCover) {
-        failures.push(`/notes/${slug}/ must render an optimized article cover.`);
-      }
-      if (!body) failures.push(`/notes/${slug}/ must mark the server-rendered article body.`);
-      if (bodyClasses.has('prose') && bodyClasses.has('reveal')) {
-        failures.push(`/notes/${slug}/ must not gate the whole article body behind Reveal.`);
-      }
-      if (attribute(backLink, 'href') !== '/notes/') {
-        failures.push(`/notes/${slug}/ must provide a stable back link to /notes/.`);
-      }
-      if (desktopRecommendationCount === 0 || desktopRecommendationCount > 3) {
-        failures.push(`/notes/${slug}/ desktop Recommended must contain 1–3 articles.`);
-      }
-      if (mobileRecommendationCount === 0 || mobileRecommendationCount > 2) {
-        failures.push(`/notes/${slug}/ mobile Recommended must contain 1–2 articles.`);
-      }
-      for (const recommendationLink of tagsWithMarker(
-        `${desktopRecommendations}${mobileRecommendations}`,
-        'a',
-        'data-article-recommendation-link',
-      )) {
-        if (attribute(recommendationLink, 'href') === `/notes/${slug}/`) {
-          failures.push(`/notes/${slug}/ must not recommend itself.`);
-        }
-      }
+      failures.push(...checkGeneratedArticle({ slug, html }));
     }
 
     // Tag 统一结果区契约
